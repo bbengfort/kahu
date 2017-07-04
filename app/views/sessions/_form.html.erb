@@ -1,0 +1,23 @@
+<%= form_for :session, url: session_path do |form| %>
+  <fieldset>
+    <div class="row">
+      <div class="col-sm-12 col-md-10 col-md-offset-1">
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"><%= icon(:user) %></span>
+            <%= form.text_field :email, type: 'email', class: 'form-control', placeholder: 'Email', autofocus: true %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"><%= icon(:lock) %></span>
+            <%= form.password_field :password, class: 'form-control', placeholder: 'Password' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= form.submit class: "btn btn-lg btn-info btn-block" %>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+<% end %>

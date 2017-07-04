@@ -1,0 +1,35 @@
+<div class="row" style="margin-top: 40px;">
+  <div class="col-sm-6 col-md-6 col-md-offset-3">
+
+    <!-- Login Panel -->
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <h4 class="panel-title">Enter Access Controlled Area</h4>
+      </div>
+
+      <div class="panel-body">
+        <%= render partial: '/sessions/form' %>
+      </div>
+
+      <div class="panel-footer">
+
+        <div class="row">
+          <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <div class="pull-left">
+              <small><%= link_to "Forgot Password?", new_password_path %></small>
+            </div>
+            <div class="pull-right">
+              <% if Clearance.configuration.allow_sign_up? %>
+                <small><%= link_to "Need an Account?", register_path %></small>
+              <% end %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

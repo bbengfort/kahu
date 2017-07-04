@@ -1,12 +1,53 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
-    <%= link_to "Kahu", "#", id: "logo" %>
-    <nav>
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <%= link_to "Kahu", root_path, id: "logo" %>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbar-tabs">
+      <!-- Navbar tabs left -->
+      <ul class="nav navbar-nav navbar-left"></ul>
+
+      <!-- Navbar dropdwon right -->
       <ul class="nav navbar-nav navbar-right">
-        <li><%= link_to "Home",   root_path %></li>
-        <li><%= link_to "Help",   help_path %></li>
-        <li><%= link_to "Log In", '#' %></li>
+        <% if signed_in? %>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <%= current_user.email %>
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="<%= help_path %>">
+                <%= icon("life-ring") %>
+                Help
+              </a>
+            </li>
+            <li>
+              <a href="<%= logout_path %>" rel="nofollow" data-method="delete">
+                <%= icon("sign-out") %>
+                Log Out
+              </a>
+            </li>
+          </ul>
+        </li>
+        <% else %>
+        <li>
+          <a href="<%= login_path %>">
+            <%= icon("sign-in") %>
+            Log In
+          </a>
+        </li>
+        <% end %>
       </ul>
-    </nav>
+
+    </div>
   </div>
 </header>

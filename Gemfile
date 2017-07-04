@@ -8,14 +8,18 @@ git_source(:github) do |repo_name|
 end
 
 # Global Dependencies
+gem "clearance"
+gem 'jbuilder', '~> 2.5'
 gem 'rails', '~> 5.1.2'
 gem 'pg'
 gem 'puma', '~> 3.7'
 gem 'turbolinks', '~> 5'
-gem 'jbuilder', '~> 2.5'
+
+# Assets
 gem 'bootstrap-sass'
 gem 'coffee-rails', '~> 4.2'
 gem 'font-awesome-sass'
+gem "jquery-rails"
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 
