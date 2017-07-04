@@ -1,4 +1,2 @@
-class UsersController < ApplicationController
-  def new
-  end
+class UsersController < Clearance::UsersController
 end
