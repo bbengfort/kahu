@@ -5,8 +5,13 @@
 
 /* universal */
 
+html,
 body {
-    padding-top: 60px;
+    height: 100%;
+}
+
+body {
+    padding-top: 86px;
 }
 
 section {
@@ -21,6 +26,14 @@ textarea {
     text-align: center;
 }
 
+/* wrapper */
+
+#wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -106px;
+    padding: 0 0 106px;
+}
 
 /* header */
 
@@ -43,16 +56,16 @@ textarea {
 /* footer */
 
 footer {
-    margin-top: 45px;
-    padding-top: 25px;
-    border-top: 1px solid #ECF0F1;
-    color: #777;
+    padding: 30px 15px;
+    font-size: 16px;
+    border-top: 1px solid #BDC3C7;
+    background-color: #ECF0F1;
 }
 
-footer a {
-    color: #555;
+footer p {
+    margin: 0;
 }
 
-footer a:hover {
-    color: #222;
+#footerStatus {
+    font-size: 12px;
 }

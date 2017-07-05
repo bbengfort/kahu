@@ -1,4 +1,10 @@
 # Gemfile for Kahu
+# frozen_string_literal: true
+
+# Read the Ruby version
+RUBY_VERSION = File.read(".ruby-version").chomp.freeze
+ruby RUBY_VERSION
+
 # Sources
 source 'https://rubygems.org'
 
@@ -24,17 +30,28 @@ gem "jquery-rails"
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 
+# Development and Test Dependencies
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'capybara', '~> 2.13'
   gem "dotenv-rails"
+  gem "rspec-rails"
+  gem 'rails-controller-testing'
   gem 'selenium-webdriver'
 end
 
+# Development Dependencies
 group :development do
   gem 'web-console', '>= 3.3.0'
   gem "letter_opener"
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem "spring-commands-rspec"
+end
+
+# Test Dependencies
+group :test do
+  gem "rspec-collection_matchers"
+  gem "shoulda-matchers", require: false
 end

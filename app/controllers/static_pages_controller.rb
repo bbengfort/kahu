@@ -1,5 +1,4 @@
-class StaticPagesController < ApplicationController
-  before_action :require_login
+class StaticPagesController < BaseController
 
   def home
   end

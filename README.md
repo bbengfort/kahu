@@ -1,4 +1,4 @@
-# Kahu
+# Kahu [![CircleCI](https://circleci.com/gh/bbengfort/kahu.svg?style=svg)](https://circleci.com/gh/bbengfort/kahu)
 
 **Replica management and monitoring service.**
 
@@ -18,7 +18,20 @@ The following external software dependencies are required. Most of these can be 
 - [PostgreSQL](http://www.postgresql.org/) version 9.6 or later
 - [Heroku Toolbelt](https://devcenter.heroku.com/articles/heroku-command-lin://devcenter.heroku.com/articles/heroku-command-line)
 
-To install the Rails libraries and dependencies use `bundle`:
+The Ruby version may be managed with [rbenv](https://github.com/rbenv/rbenv) by executing `rbenv install`. It will detect the version of ruby declared in the `.ruby-version` file and install that. Once done, check to make sure that the paths are properly set:
+
+```
+$ gem env home
+# => ~/.rbenv/versions/<ruby-version>/lib/ruby/gems/...
+```
+
+If the gem path is not properly set, try checking your `$PATH`. It should be set to something similar to:
+
+```
+export PATH=$HOME/.rbenv/shims:$PATH
+```
+
+The rbenv shims path should come before /usr/bin. To install the Rails libraries and dependencies use `bundle`:
 
 ```
 $ bundle install

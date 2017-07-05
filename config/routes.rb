@@ -19,4 +19,9 @@ Rails.application.routes.draw do
   delete "/logout" => "sessions#destroy", as: "sign_out"
   get "/register" => "users#new", as: "sign_up"
 
+  # API Routes
+  namespace :api do
+      resources :status, only: :index
+  end
+
 end
