@@ -71,6 +71,10 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
+    dotenv (2.2.1)
+    dotenv-rails (2.2.1)
+      dotenv (= 2.2.1)
+      railties (>= 3.2, < 5.2)
     email_validator (1.6.0)
       activemodel
     erubi (1.6.1)
@@ -193,6 +197,7 @@ DEPENDENCIES
   capybara (~> 2.13)
   clearance
   coffee-rails (~> 4.2)
+  dotenv-rails
   font-awesome-sass
   jbuilder (~> 2.5)
   jquery-rails

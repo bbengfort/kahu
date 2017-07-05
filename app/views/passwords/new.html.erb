@@ -1,16 +1,49 @@
-<div id="clearance" class="password-reset">
-  <h2><%= t(".title") %></h2>
+<div class="row" style="margin-top: 40px;">
+  <div class="col-sm-6 col-md-6 col-md-offset-3">
 
-  <p><%= t(".description") %></p>
+    <!-- Login Panel -->
+    <div class="panel panel-default">
 
-  <%= form_for :password, url: passwords_path do |form| %>
-    <div class="text-field">
-      <%= form.label :email %>
-      <%= form.text_field :email, type: 'email' %>
+      <div class="panel-heading">
+        <h4 class="panel-title"><%= t(".title") %></h4>
+      </div>
+
+      <div class="panel-body">
+
+        <%= form_for :password, url: passwords_path do |form| %>
+        <fieldset>
+          <div class="row">
+            <div class="col-sm-12 col-md-10 col-md-offset-1">
+              <div class="form-group">
+                <div class="input-group">
+                  <span class="input-group-addon"><%= icon(:user) %></span>
+                  <%= form.text_field :email, type: 'email', class: 'form-control', placeholder: 'Email', autofocus: true %>
+                </div>
+                <p class="help-block"><%= t(".description") %></p>
+              </div>
+              <div class="form-group">
+                <%= form.submit class: "btn btn-lg btn-info btn-block" %>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <% end %>
+
+      </div>
+
+      <div class="panel-footer">
+
+        <div class="row">
+          <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <div class="pull-left">
+              <small><%= link_to "Return to Log In", login_path %></small>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="submit-field">
-      <%= form.submit %>
-    </div>
-  <% end %>
+  </div>
 </div>

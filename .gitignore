@@ -16,8 +16,18 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+coverage/*
 
+.sass-cache/
 /node_modules
 /yarn-error.log
 
 .byebug_history
+
+# Mac Stuff
+*.DS_Store
+*.swo
+*.swp
+
+# Local environment
+.env.local
