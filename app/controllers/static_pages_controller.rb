@@ -1,4 +1,6 @@
 class StaticPagesController < ApplicationController
+  before_action :require_login
+
   def home
   end
 
@@ -7,4 +9,5 @@ class StaticPagesController < ApplicationController
 
   def about
   end
+
 end

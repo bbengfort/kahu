@@ -9,14 +9,14 @@ Rails.application.routes.draw do
   resources :passwords, controller: "clearance/passwords", only: [:create, :new]
   resource :session, controller: "sessions", only: [:create]
 
-  resources :users, controller: "clearance/users", only: [:create] do
+  resources :users, controller: "users", only: [:create] do
     resource :password,
       controller: "clearance/passwords",
       only: [:create, :edit, :update]
   end
 
-  get "/login" => "sessions#new", as: "login"
-  delete "/logout" => "sessions#destroy", as: "logout"
-  get "/register" => "users#new", as: "register"
+  get "/login" => "sessions#new", as: "sign_in"
+  delete "/logout" => "sessions#destroy", as: "sign_out"
+  get "/register" => "users#new", as: "sign_up"
 
 end

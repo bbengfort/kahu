@@ -20,7 +20,7 @@
         <% if signed_in? %>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <%= current_user.email %>
+            <%= current_user.full_name_or_email %>
             <b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
@@ -31,7 +31,7 @@
               </a>
             </li>
             <li>
-              <a href="<%= logout_path %>" rel="nofollow" data-method="delete">
+              <a href="<%= sign_out_path %>" rel="nofollow" data-method="delete">
                 <%= icon("sign-out") %>
                 Log Out
               </a>
@@ -40,7 +40,7 @@
         </li>
         <% else %>
         <li>
-          <a href="<%= login_path %>">
+          <a href="<%= sign_in_path %>">
             <%= icon("sign-in") %>
             Log In
           </a>

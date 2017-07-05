@@ -11,6 +11,7 @@ end
 gem "clearance"
 gem 'jbuilder', '~> 2.5'
 gem 'rails', '~> 5.1.2'
+gem "pacecar"
 gem 'pg'
 gem 'puma', '~> 3.7'
 gem 'turbolinks', '~> 5'
