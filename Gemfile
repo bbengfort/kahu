@@ -15,6 +15,7 @@ end
 
 # Global Dependencies
 gem "clearance"
+gem "ipaddress"
 gem 'jbuilder', '~> 2.5'
 gem 'rails', '~> 5.1.2'
 gem "pacecar"

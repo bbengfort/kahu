@@ -1,0 +1,55 @@
+
+<!-- Page Header -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="page-header">
+      <h2 class="pull-left"><%= pluralize(@machines.count, "#{@descriptor} Host") %></h2>
+      <div class="header-controls pull-right">
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-primary" data-toggle="dropdown">
+            <%= icon(:filter) %> Filter hosts <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="?active=true">Active Hosts</a></li>
+            <li><a href="?active=false">Inactive Hosts</a></li>
+            <li><a href="?active=both">All Hosts</a></li>
+          </ul>
+        </div>
+        <a href="<%= new_machine_url %>" class="btn btn-success btn-sm">
+          <%= icon("plus-circle") %>
+          Add Host
+        </a>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Replica Table -->
+<div class="row">
+  <div class="col-md-12">
+
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+        <th>Hostname</th>
+        <th>IP Address</th>
+        <th>Domain</th>
+        <th>Location</th>
+        <th>Description</th>
+      </thead>
+      <tbody>
+        <% mdash = "&mdash;".html_safe %>
+        <% @machines.each do |m| %>
+        <tr class="clickable-row", data-href="<%= machine_path(m) %>">
+          <td><%= m.hostname %></td>
+          <td><%= m.ip_address.nil? ? mdash : m.ip_address %></td>
+          <td><%= m.domain.empty? ? mdash : m.domain %></td>
+          <td><%= m.location.empty? ? mdash : m.location %></td>
+          <td><%= m.description.empty? ? mdash : m.description %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>

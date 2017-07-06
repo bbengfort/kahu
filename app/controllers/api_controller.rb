@@ -1,4 +1,6 @@
-class ApiController < BaseController
+class ApiController < ApplicationController
+
+  before_action :require_api_authorization
 
   def show
     serializer = response_object_serializer_class.new(response_object)
@@ -6,6 +8,14 @@ class ApiController < BaseController
   end
 
   private
+
+  def require_api_authorization
+    key = request.headers['X-Api-Key']
+    @machine = Machine.where(apikey: key).first if key
+    unless @machine
+      require_login
+    end
+  end
 
   def response_object
       fail ABSTRACT_CLASS_EXCEPTION_MESSAGE

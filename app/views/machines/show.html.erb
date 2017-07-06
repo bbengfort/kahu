@@ -1,0 +1,134 @@
+
+<!-- Page Header -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="page-header">
+      <h2 class="pull-left"><%= @machine.hostname.capitalize %>  <small>(<%= @machine.addressed_by %>)</small></h2>
+      <div class="header-controls pull-right">
+        <a href="<%= machines_path %>" class="btn btn-primary btn-sm">
+          <%= icon("arrow-left") %>
+          Back to Hosts
+        </a>
+      </div>
+      <div class="clearfix"></div>
+      <ul class="list-inline">
+        <li><span class="light-indicator <%= @machine.active ? "text-success" : "text-danger" %>"><%= icon("circle") %></span> status: <%= @machine.active ? "active" : "inactive" %><li>
+        <li><span class="light-indicator text-muted"><%= icon("circle") %></span> health: unknown<li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-12">
+    <div class="pull-left">
+      <% if @machine.active %>
+      <%= form_for @machine do |f| %>
+        <%= f.hidden_field :active, value: false %>
+        <button type="submit" class="btn btn-warning btn-sm" title="deactivate">
+          <%= icon("stop-circle") %>
+          Deactivate
+        </button>
+      <% end %>
+      <% else %>
+      <%= form_for @machine do |f| %>
+        <%= f.hidden_field :active, value: true %>
+        <button type="submit" class="btn btn-success btn-sm" title="Activate">
+          <%= icon("play-circle") %>
+          Activate
+        </button>
+      <% end %>
+      <% end %>
+    </div>
+    <div class="pull-right">
+      <a href="<%= machine_path(@machine) %>" rel="nofollow"
+         class="btn btn-danger btn-sm" title="delete"
+         data-confirm="<%= "Delete host #{@machine.hostname}?" %>" data-method="delete">
+         <%= icon("trash") %>
+         Delete
+      </a>
+      <a href="<%= edit_machine_path(@machine) %>" class="btn btn-default btn-sm" title="edit">
+        <%= icon("edit") %>
+        Edit
+      </a>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+
+<!-- Two Columns -->
+<div class="row">
+  <!-- Left Column -->
+  <div class="col-md-4">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Details</h4>
+      </div>
+      <div class="panel-body">
+        <p><%= @machine.description %>
+
+      <dl>
+          <dt>Location</dt>
+          <dl><%= @machine.location %></dl>
+          <dt>External IP</dt>
+          <dl><%= @machine.ip_address %></dl>
+          <dt>MAC Address</dt>
+          <dl><%= @machine.mac_address %></dl>
+          <% if @machine.last_seen %>
+          <dt>Last Seen</dt>
+          <dl><%= @machine.last_seen %></dl>
+          <% end %>
+      </dl>
+      </div>
+      <div class="panel-footer">
+        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#apikeyModal">
+          Show API Key
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Column -->
+  <div class="col-md-8">
+
+
+
+  </div>
+</div>
+
+
+<!-- Modals -->
+<div class="modal fade" id="apikeyModal" tabindex="-1" role="dialog" aria-labelledby="apikeyModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="apikeyModalLabel">Replica API Key</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+              <div class="form-group">
+                <div class="input-group">
+                  <input class="form-control" type="text" value="<%= @machine.apikey %>" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default pbcopy" type="button" title="Copy to Clipboard">
+                      <%= icon(:copy) %>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <p>Use the above API Key in client requests from the replica by adding the key to the header of the HTTP request using the <kbd>X-Api-Key</kbd> header value.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

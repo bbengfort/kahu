@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170705125021) do
+ActiveRecord::Schema.define(version: 20170706122004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "machines", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.string "hostname", limit: 255, null: false
+    t.string "description", limit: 4000
+    t.string "domain", limit: 255
+    t.inet "ip_address"
+    t.string "mac_address", limit: 20
+    t.string "location", limit: 255
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.datetime "last_seen"
+    t.string "apikey", limit: 45
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["apikey"], name: "index_machines_on_apikey", unique: true
+    t.index ["hostname"], name: "index_machines_on_hostname", unique: true
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false

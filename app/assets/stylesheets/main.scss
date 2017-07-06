@@ -11,7 +11,7 @@ body {
 }
 
 body {
-    padding-top: 86px;
+    padding-top: 66px;
 }
 
 section {
@@ -32,10 +32,10 @@ textarea {
     min-height: 100%;
     height: auto;
     margin: 0 auto -106px;
-    padding: 0 0 106px;
+    padding: 0 0 146px;
 }
 
-/* header */
+/* navbar */
 
 #logo {
     float: left;
@@ -68,4 +68,15 @@ footer p {
 
 #footerStatus {
     font-size: 12px;
+}
+
+/* page headers */
+
+.header-controls {
+    margin-top: 24px;
+}
+
+/* tables */
+.clickable-row {
+    cursor: pointer;
 }

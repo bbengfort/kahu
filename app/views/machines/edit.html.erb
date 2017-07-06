@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <div class="page-header">
+      <h2>Edit Network Host</h2>
+      <p class="text-muted">Network hosts are physical machines that can run multiple replica servers</p>
+    </div>
+
+    <% if @machine.errors.any? %>
+    <div class="alerts">
+      <div class="alert alert-danger" role="alert">
+        <%= pluralize(@machine.errors.count, "error") %>
+        prevented creating a new machine record.
+      </div>
+    </div>
+    <% end %>
+
+    <div id="new-machine-form">
+      <%= render partial: '/machines/form' %>
+    </div>
+  </div>
+</div>

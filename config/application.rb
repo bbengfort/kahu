@@ -13,6 +13,7 @@ module Kahu
 
     config.autoload_paths += [
       "#{config.root}/app/serializers",
+      "#{config.root}/app/validators",
     ]
 
     config.generators do |g|
@@ -21,6 +22,7 @@ module Kahu
         g.stylesheets false
         g.test_framework :rspec
         g.view_specs false
+        g.javascript_engine :js
     end
   end
 end
