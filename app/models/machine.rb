@@ -20,7 +20,7 @@ class Machine < ApplicationRecord
     domain.nil? ? ip_address : domain
   end
 
-  protected
+  private
 
   def generate_api_key
     salt = SecureRandom.base64
@@ -28,8 +28,6 @@ class Machine < ApplicationRecord
     key = Digest::SHA256.base64digest("#{id}#{hostname}#{time}#{salt}")
     self.apikey = key.tr('+/=', 'XpR')
   end
-
-  private
 
   def lookup_geoip_location
     if self.ip_address && self.ip_address_changed?
