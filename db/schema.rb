@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170706122004) do
+ActiveRecord::Schema.define(version: 20170706214811) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,16 @@ ActiveRecord::Schema.define(version: 20170706122004) do
     t.index ["hostname"], name: "index_machines_on_hostname", unique: true
   end
 
+  create_table "replicas", force: :cascade do |t|
+    t.integer "precedence", null: false
+    t.integer "port", null: false
+    t.bigint "machine_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["machine_id"], name: "index_replicas_on_machine_id"
+    t.index ["precedence"], name: "index_replicas_on_precedence", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -46,4 +56,5 @@ ActiveRecord::Schema.define(version: 20170706122004) do
     t.index ["remember_token"], name: "index_users_on_remember_token"
   end
 
+  add_foreign_key "replicas", "machines"
 end

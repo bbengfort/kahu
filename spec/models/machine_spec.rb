@@ -33,4 +33,19 @@ RSpec.describe Machine, type: :model do
     expect(m.apikey).not_to be_empty
   end
 
+  it "should be addressed by ip address" do
+    m = Machine.new(hostname: "foo", ip_address: "192.168.1.2")
+    expect(m.addressed_by).to eq(m.ip_address)
+  end
+
+  it "should be addressed by domain" do
+    m = Machine.new(hostname: "foo", domain: "test.example.com")
+    expect(m.addressed_by).to eq(m.domain)
+  end
+
+  it "should be addressed by domain even if ip address exists" do
+    m = Machine.new(hostname: "foo", ip_address: "192.168.1.1", domain: "test.example.com")
+    expect(m.addressed_by).to eq(m.domain)
+  end
+
 end

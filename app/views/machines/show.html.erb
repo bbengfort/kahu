@@ -3,18 +3,18 @@
 <div class="row">
   <div class="col-md-12">
     <div class="page-header">
-      <h2 class="pull-left"><%= @machine.hostname.capitalize %>  <small>(<%= @machine.addressed_by %>)</small></h2>
-      <div class="header-controls pull-right">
+      <h2><%= @machine.hostname.capitalize %>  <small>(<%= @machine.addressed_by %>)</small></h2>
+      <ul class="list-inline pull-left">
+        <li><span class="light-indicator <%= @machine.active ? "text-success" : "text-danger" %>"><%= icon("circle") %></span> status: <%= @machine.active ? "active" : "inactive" %><li>
+        <li><span class="light-indicator text-muted"><%= icon("circle") %></span> health: unknown<li>
+      </ul>
+      <div class="pull-right">
         <a href="<%= machines_path %>" class="btn btn-primary btn-sm">
           <%= icon("arrow-left") %>
           Back to Hosts
         </a>
       </div>
       <div class="clearfix"></div>
-      <ul class="list-inline">
-        <li><span class="light-indicator <%= @machine.active ? "text-success" : "text-danger" %>"><%= icon("circle") %></span> status: <%= @machine.active ? "active" : "inactive" %><li>
-        <li><span class="light-indicator text-muted"><%= icon("circle") %></span> health: unknown<li>
-      </ul>
     </div>
   </div>
 </div>
@@ -41,16 +41,23 @@
       <% end %>
     </div>
     <div class="pull-right">
-      <a href="<%= machine_path(@machine) %>" rel="nofollow"
-         class="btn btn-danger btn-sm" title="delete"
-         data-confirm="<%= "Delete host #{@machine.hostname}?" %>" data-method="delete">
-         <%= icon("trash") %>
-         Delete
-      </a>
-      <a href="<%= edit_machine_path(@machine) %>" class="btn btn-default btn-sm" title="edit">
-        <%= icon("edit") %>
-        Edit
-      </a>
+      <button type="button" class="btn btn-default btn-sm"
+              data-toggle="modal" data-target="#addReplicaModal">
+          <%= icon("plus-circle") %>
+          Add Replica
+      </button>
+      <div class="btn-group">
+        <a href="<%= machine_path(@machine) %>" rel="nofollow"
+           class="btn btn-danger btn-sm" title="delete"
+           data-confirm="<%= "Delete host #{@machine.hostname}?" %>" data-method="delete">
+           <%= icon("trash") %>
+           Delete
+        </a>
+        <a href="<%= edit_machine_path(@machine) %>" class="btn btn-default btn-sm" title="edit">
+          <%= icon("edit") %>
+          Edit
+        </a>
+      </div>
     </div>
     <div class="clearfix"></div>
   </div>
@@ -61,30 +68,64 @@
   <!-- Left Column -->
   <div class="col-md-4">
 
+    <!-- Details Panel -->
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">Details</h4>
       </div>
       <div class="panel-body">
         <p><%= @machine.description %>
+      </div>
+      <% mdash = "&mdash;".html_safe %>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <strong>External IP</strong>
+          <span class="pull-right">
+            <%= @machine.ip_address.nil? ? mdash : @machine.ip_address %>
+          </span>
+        </li>
+        <li class="list-group-item">
+          <strong>MAC Address</strong>
+          <span class="pull-right">
+            <%= @machine.mac_address.empty? ? mdash : @machine.mac_address %>
+          </span>
+        </li>
+        <% if @machine.last_seen %>
+        <li class="list-group-item">
+          <strong>Last Seen:</strong>
+          <span class="pull-right">
+            <%= @machine.last_seen %>
+          </span>
+        </li>
+        <% end %>
+        <li class="list-group-item">
+          <strong>API Key</strong>
+          <span class="pull-right">
+            <button type="button" class="btn btn-info btn-xs"
+                    data-toggle="modal" data-target="#apikeyModal">
+              Click to Show
+            </button>
+          </span>
+        </li>
+      </ul>
+    </div>
 
-      <dl>
-          <dt>Location</dt>
-          <dl><%= @machine.location %></dl>
-          <dt>External IP</dt>
-          <dl><%= @machine.ip_address %></dl>
-          <dt>MAC Address</dt>
-          <dl><%= @machine.mac_address %></dl>
-          <% if @machine.last_seen %>
-          <dt>Last Seen</dt>
-          <dl><%= @machine.last_seen %></dl>
-          <% end %>
-      </dl>
+    <!-- Location Panel -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <%= @machine.location.empty? ? "Location" : "Located in #{@machine.location}" %>
+        </h4>
+      </div>
+      <div class="panel-body">
+        <% if @machine.latitude && @machine.longitude %>
+          <div class="map"><p class="text-danger">Google Maps not Implemented!</p></div>
+        <% else %>
+          <%= image_tag "location_unavailable.png", class: "img-responsive center-block" %>
+        <% end %>
       </div>
       <div class="panel-footer">
-        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#apikeyModal">
-          Show API Key
-        </button>
+        <small class="text-muted">GeoIP fetched from MaxMind</small>
       </div>
     </div>
 
@@ -93,42 +134,48 @@
   <!-- Right Column -->
   <div class="col-md-8">
 
-
-
-  </div>
-</div>
-
-
-<!-- Modals -->
-<div class="modal fade" id="apikeyModal" tabindex="-1" role="dialog" aria-labelledby="apikeyModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="apikeyModalLabel">Replica API Key</h4>
+    <!-- Replica Processes -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Replica Processes</h4>
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="row">
-            <div class="col-sm-10 col-sm-offset-1">
-              <div class="form-group">
-                <div class="input-group">
-                  <input class="form-control" type="text" value="<%= @machine.apikey %>" readonly>
-                  <span class="input-group-btn">
-                    <button class="btn btn-default pbcopy" type="button" title="Copy to Clipboard">
-                      <%= icon(:copy) %>
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-        <p>Use the above API Key in client requests from the replica by adding the key to the header of the HTTP request using the <kbd>X-Api-Key</kbd> header value.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+      <table class="table table-hover">
+        <thead>
+          <th class="text-center">PID</th>
+          <th>Name</th>
+          <th>Address</th>
+          <th class="text-right"></th>
+        </thead>
+        <tbody>
+          <% if @machine.replicas.count > 0 %>
+            <% @machine.replicas.order(:precedence).each do |r| %>
+            <tr>
+              <td class="text-center"><%= r.precedence %></td>
+              <td><%= r.name %></td>
+              <td><%= r.address %></td>
+              <td class="text-right">
+                <%= link_to icon(:trash).html_safe, [r.machine, r],
+                    # class: "btn btn-sm btn-danger",
+                    method: :delete, data: { confirm: 'Are you sure?' } %>
+              </td>
+            </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="3" class="text-center text-warning">
+                No associated replica processes
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
+
   </div>
 </div>
+
+<!-- Add Replica Modal -->
+<%= render 'replicas/modals/add' %>
+
+<!-- API Key Modal -->
+<%= render 'machines/modals/apikey' %>

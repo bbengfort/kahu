@@ -1,0 +1,14 @@
+<%= form_for([@machine, @machine.replicas.build]) do |f| %>
+  <fieldset>
+    <div class="form-group">
+      <%= f.label :precedence, "Precedence Component" %>
+      <%= f.text_field :precedence, class: 'form-control', autofocus: true %>
+      <p class="help-block">The precedence component (PID) must be unique across all replica processes.</p>
+    </div>
+    <div class="form-group">
+      <%= f.label :port, "Port Number" %>
+      <%= f.text_field :port, class: 'form-control' %>
+      <p class="help-block">The port number from 1024-65537 the replica server is listening on.</p>
+    </div>
+  </fieldset>
+<% end %>
