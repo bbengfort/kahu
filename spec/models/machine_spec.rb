@@ -33,15 +33,6 @@ RSpec.describe Machine, type: :model do
     expect(m.apikey).not_to be_empty
   end
 
-  it "should lookup latitude and longitude on create" do
-    m = Machine.create(hostname: "foo", ip_address: "192.168.1.1")
-    expect(m.latitude).not_to be_nil
-    expect(m.longitude).not_to be_nil
-  end
-
-  it "should not lookup latitude and longitude without IP address"
-  it "should lookup latitude and longitude on save if IP address changed"
-
   it "should be addressed by ip address" do
     m = Machine.new(hostname: "foo", ip_address: "192.168.1.1")
     expect(m.addressed_by).to eq(m.ip_address)
@@ -55,6 +46,21 @@ RSpec.describe Machine, type: :model do
   it "should be addressed by domain even if ip address exists" do
     m = Machine.new(hostname: "foo", ip_address: "192.168.1.1", domain: "test.example.com")
     expect(m.addressed_by).to eq(m.domain)
+  end
+
+  context "when geolocating" do
+
+    it "should lookup latitude and longitude on create" do
+      m = Machine.create(hostname: "foo", ip_address: "192.168.1.1")
+      expect(m.latitude).not_to be_nil
+      expect(m.longitude).not_to be_nil
+    end
+
+    it "should not lookup latitude and longitude without IP address"
+    it "should lookup latitude and longitude on save if IP address changed"
+    it "should remove latitude and longitude when IP address is deleted"
+    it "should handle unknown IP addresses"
+
   end
 
 end

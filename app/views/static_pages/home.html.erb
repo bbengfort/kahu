@@ -1,2 +1,90 @@
 <% provide(:title, "Home") %>
-<h1>Kahu Replica Manager</h1>
+
+<!-- Page Header -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="page-header">
+      <h2 class="pull-left">Kahu Replica Manager</h2>
+      <div class="header-controls pull-right">
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Map and Hosts List -->
+<div class="row">
+
+  <!-- Map -->
+  <div class="col-md-7">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Geographic Replication</h4>
+      </div>
+      <div class="panel-body">
+        <!-- Map of Replicas -->
+        <div id="map" style="width: 100%; min-height: 400px;"></div>
+      </div>
+      <div class="panel-footer">
+        <small class="text-muted">GeoIP provided by MaxMind</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hosts -->
+  <div class="col-md-5">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">Hosts and Replicas</h4>
+      </div>
+      <table class="table">
+        <% @machines.each do |m| %>
+          <tr>
+            <td>
+              <!-- Active -->
+              <span class="text-<%= m.active ? :success : :danger %>" title="Active">
+                <%= icon(:circle) %>
+              </span>
+              <!-- Health -->
+              <span class="text-muted" title="Health">
+                <%= icon(:circle) %>
+              </span>
+            </td>
+            <td><%= m.hostname %></td>
+            <td><%= m.addressed_by %></td>
+            <td>
+              <span class="label label-<%= m.replicas.count > 0 ? :success : :default %>">
+                <%= m.replicas.count %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+      <div class="panel-footer">
+        <small class="text-muted pull-right">
+          <%= link_to "Manage Hosts and Replicas", machines_path %>
+        </small>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Google Maps Script -->
+<script>
+  handler = Gmaps.build('Google');
+  handler.buildMap({
+    provider: {
+      disableDefaultUI: false,
+    },
+    internal: {id: 'map'}
+  }, function(){
+      markers = handler.addMarkers(<%=raw @maphash.to_json %>);
+      handler.bounds.extendWith(markers);
+      handler.fitMapToBounds();
+      // handler.getMap().setZoom(10);
+  }
+  );
+</script>

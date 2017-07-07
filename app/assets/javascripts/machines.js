@@ -18,6 +18,7 @@
         document.execCommand("copy");
         input.blur();
       });
+
   });
 
 })(jQuery)

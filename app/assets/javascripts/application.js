@@ -11,6 +11,8 @@
 // about supported directives.
 //
 //= require jquery
+//= require underscore
+//= require gmaps/google
 //= require bootstrap
 //= require rails-ujs
 //= require turbolinks

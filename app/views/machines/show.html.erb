@@ -119,7 +119,7 @@
       </div>
       <div class="panel-body">
         <% if @machine.latitude && @machine.longitude %>
-          <div class="map"><p class="text-danger">Google Maps not Implemented!</p></div>
+          <div id="map" style="width: 100%; min-height: 250px;"></div>
         <% else %>
           <%= image_tag "location_unavailable.png", class: "img-responsive center-block" %>
         <% end %>
@@ -173,6 +173,31 @@
 
   </div>
 </div>
+
+<!-- Google Maps Script -->
+<script>
+  handler = Gmaps.build('Google');
+  handler.buildMap({
+    provider: {
+      disableDefaultUI: false,
+      gestureHandling: "none",
+      zoom: 100
+    },
+    internal: {id: 'map'}
+  }, function(){
+      markers = handler.addMarkers([
+        {
+          "lat": <%= @machine.latitude %>,
+          "lng": <%= @machine.longitude %>,
+          "infowindow": "<%= @machine.hostname.capitalize %>"
+        }
+      ]);
+      handler.bounds.extendWith(markers);
+      handler.fitMapToBounds();
+      handler.getMap().setZoom(10); 
+  }
+  );
+</script>
 
 <!-- Add Replica Modal -->
 <%= render 'replicas/modals/add' %>

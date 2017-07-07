@@ -17,7 +17,7 @@ class Machine < ApplicationRecord
 
 
   def addressed_by
-    domain.nil? ? ip_address : domain
+    domain.nil? || domain.empty? ? ip_address : domain
   end
 
   private
