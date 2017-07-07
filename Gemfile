@@ -15,6 +15,7 @@ end
 
 # Global Dependencies
 gem "clearance"
+gem "httparty"
 gem "ipaddress"
 gem 'jbuilder', '~> 2.5'
 gem 'rails', '~> 5.1.2'
@@ -55,4 +56,5 @@ end
 group :test do
   gem "rspec-collection_matchers"
   gem "shoulda-matchers", require: false
+  gem "webmock"
 end

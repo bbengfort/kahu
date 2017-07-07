@@ -1,0 +1,59 @@
+{
+  "continent": {
+    "code": "NA",
+    "geoname_id": 6255149,
+    "names": {
+      "de": "Nordamerika",
+      "en": "North America",
+      "es": "Norteamérica",
+      "fr": "Amérique du Nord",
+      "ja": "北アメリカ",
+      "pt-BR": "América do Norte",
+      "ru": "Северная Америка",
+      "zh-CN": "北美洲"
+    }
+  },
+  "country": {
+    "iso_code": "US",
+    "geoname_id": 6252001,
+    "names": {
+      "zh-CN": "美国",
+      "de": "USA",
+      "en": "United States",
+      "es": "Estados Unidos",
+      "fr": "États-Unis",
+      "ja": "アメリカ合衆国",
+      "pt-BR": "Estados Unidos",
+      "ru": "США"
+    }
+  },
+  "location": {
+    "accuracy_radius": 100,
+    "latitude": 43.8791,
+    "longitude": -103.4591
+  },
+  "maxmind": {
+    "queries_remaining": 293
+  },
+  "registered_country": {
+    "iso_code": "US",
+    "geoname_id": 6252001,
+    "names": {
+      "ru": "США",
+      "zh-CN": "美国",
+      "de": "USA",
+      "en": "United States",
+      "es": "Estados Unidos",
+      "fr": "États-Unis",
+      "ja": "アメリカ合衆国",
+      "pt-BR": "Estados Unidos"
+    }
+  },
+  "traits": {
+    "autonomous_system_number": 15169,
+    "autonomous_system_organization": "Example Inc.",
+    "isp": "Example",
+    "organization": "Example",
+    "ip_address": "192.168.1.1"
+  }
+}

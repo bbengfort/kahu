@@ -33,8 +33,17 @@ RSpec.describe Machine, type: :model do
     expect(m.apikey).not_to be_empty
   end
 
+  it "should lookup latitude and longitude on create" do
+    m = Machine.create(hostname: "foo", ip_address: "192.168.1.1")
+    expect(m.latitude).not_to be_nil
+    expect(m.longitude).not_to be_nil
+  end
+
+  it "should not lookup latitude and longitude without IP address"
+  it "should lookup latitude and longitude on save if IP address changed"
+
   it "should be addressed by ip address" do
-    m = Machine.new(hostname: "foo", ip_address: "192.168.1.2")
+    m = Machine.new(hostname: "foo", ip_address: "192.168.1.1")
     expect(m.addressed_by).to eq(m.ip_address)
   end
 

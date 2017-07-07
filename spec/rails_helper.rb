@@ -4,8 +4,10 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
-require 'rspec/rails'
 require 'clearance/rspec'
+require 'rspec/rails'
+require "shoulda-matchers"
+require "webmock/rspec"
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -55,4 +57,20 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Stub external requests
+  config.before(:each) do
+    rpath = File.expand_path('fixtures/geoip_response.json', File.dirname(__FILE__))
+    stub_request(:get, "https://geoip.maxmind.com/geoip/v2.1/city/192.168.1.1").
+         with(headers: {
+           'Accept'=>'*/*', 'Authorization'=>'Basic Og==', 'User-Agent'=>'Ruby',
+           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
+         }).
+         to_return(status: 200, body: File.read(rpath).chomp,
+         headers: {
+            'Content-Length' => '964',
+            'Content-Type' => 'application/vnd.maxmind.com-city+json; charset=UTF-8; version=2.1',
+            'Server' => 'geoip2-daemon'
+          })
+  end
 end

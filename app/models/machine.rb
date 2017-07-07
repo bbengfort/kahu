@@ -1,3 +1,5 @@
+require 'geoip'
+
 class Machine < ApplicationRecord
 
   has_many :replicas, dependent: :destroy
@@ -10,9 +12,9 @@ class Machine < ApplicationRecord
   validates :ip_address, ipaddr: true
   validates :mac_address, macaddr: true
 
-  before_create do |m|
-    m.apikey = m.generate_api_key
-  end
+  before_create :generate_api_key
+  before_save :lookup_geoip_location
+
 
   def addressed_by
     domain.nil? ? ip_address : domain
@@ -24,7 +26,22 @@ class Machine < ApplicationRecord
     salt = SecureRandom.base64
     time = Time.new
     key = Digest::SHA256.base64digest("#{id}#{hostname}#{time}#{salt}")
-    key.tr('+/=', 'XpR')
+    self.apikey = key.tr('+/=', 'XpR')
+  end
+
+  private
+
+  def lookup_geoip_location
+    if self.ip_address && self.ip_address_changed?
+      geoip = GeoIP.new(
+        Rails.application.secrets.geoip2_api_user,
+        Rails.application.secrets.geoip2_api_key
+      )
+
+      loc = geoip.location(ip_address.to_s)
+      self.latitude = loc["latitude"]
+      self.longitude = loc["longitude"]
+    end
   end
 
 end
