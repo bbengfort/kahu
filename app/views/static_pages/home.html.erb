@@ -1,5 +1,24 @@
 <% provide(:title, "Home") %>
 
+<!-- Flashes -->
+<% if flash.any? %>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <div class="alerts">
+      <% flash.each do |key, value| %>
+      <div class="alert alert-danger alert-dismissible <%= key %>" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <%= value %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<% end %>
+
+
 <!-- Page Header -->
 <div class="row">
   <div class="col-md-12">

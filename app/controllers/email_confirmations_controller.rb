@@ -4,8 +4,8 @@ class EmailConfirmationsController < ApplicationController
     user = User.find_by!(email_confirmation_token: params[:token])
     user.confirm_email
 
-    # TODO: Redirect to users listing 
-    redirect_to root_path, notice: t("flashes.confirmed_email")
+    # TODO: Redirect to users listing
+    redirect_to users_path, notice: "#{user.email} confirmed"
   end
 
 end

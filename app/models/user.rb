@@ -10,8 +10,17 @@ class User < ApplicationRecord
     end
   end
 
+  def admin?
+    self.is_admin
+  end
+
+  def confirmed?
+    self.email_confirmed_at.present?
+  end
+
   def confirm_email
     self.email_confirmed_at = Time.current
     save
   end
+
 end

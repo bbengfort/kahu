@@ -2,6 +2,39 @@ require "rails_helper"
 
 RSpec.describe UsersController, type: :controller do
 
+  describe "#index" do
+
+    context "when administrator signed in" do
+      it "should render users index" do
+        user = User.new(email_confirmed_at: Time.current, is_admin:true)
+        sign_in_as(user)
+
+        get :index
+        expect(response).to have_http_status(:ok)
+        expect(response).to render_template("users/index")
+      end
+    end
+
+    context "when regular user signed in" do
+      it "should require admin access" do
+        user = User.new(email_confirmed_at: Time.current)
+        sign_in_as(user)
+
+        get :index
+        expect(response).to redirect_to(:root)
+      end
+    end
+
+    context "when no user signed in" do
+      it "should require admin access" do
+        get :index
+        expect(response).to redirect_to(:sign_in)
+      end
+
+    end
+
+  end
+
     describe "#new" do
       it "should render the registration template" do
         get :new

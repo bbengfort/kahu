@@ -25,7 +25,7 @@ RSpec.describe EmailConfirmationsController, type: :controller do
 
         user.reload
         expect(user.email_confirmed_at).to be_present
-        expect(response).to redirect_to(root_path)
+        expect(response).to redirect_to(users_path)
       end
     end
 

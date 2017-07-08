@@ -15,6 +15,9 @@
       <!-- Navbar tabs left -->
       <ul class="nav navbar-nav navbar-left">
         <li><%= link_to "Hosts", machines_path %></li>
+        <% if current_user && current_user.admin? %>
+        <li><%= link_to "Users", users_path %></li>
+        <% end %>
       </ul>
 
       <!-- Navbar dropdwon right -->
