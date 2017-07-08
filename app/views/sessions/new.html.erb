@@ -9,6 +9,20 @@
       </div>
 
       <div class="panel-body">
+        <% if flash.any? %>
+        <div class="row">
+          <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <div class="alerts">
+              <% flash.each do |key, value| %>
+              <div class="alert alert-danger <%= key %>" role="alert">
+                <%= value %>
+              </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <% end %>
+
         <%= render partial: '/sessions/form' %>
       </div>
 

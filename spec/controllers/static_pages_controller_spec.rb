@@ -6,10 +6,10 @@ RSpec.describe StaticPagesController, type: :controller do
         base_title = "Kahu Replica Manager"
     end
 
-    describe "GET home" do
+    describe "#home" do
         context "when logged in" do
             before do
-                user = User.new
+                user = User.new(email_confirmed_at: Time.current)
                 sign_in_as(user)
                 get :home
             end
@@ -33,10 +33,10 @@ RSpec.describe StaticPagesController, type: :controller do
         end
     end
 
-    describe "GET help" do
+    describe "#help" do
         context "when logged in" do
             before do
-                user = User.new
+                user = User.new(email_confirmed_at: Time.current)
                 sign_in_as(user)
                 get :help
             end
@@ -60,10 +60,10 @@ RSpec.describe StaticPagesController, type: :controller do
         end
     end
 
-    describe "GET about" do
+    describe "#about" do
         context "when logged in" do
             before do
-                user = User.new
+                user = User.new(email_confirmed_at: Time.current)
                 sign_in_as(user)
                 get :about
             end

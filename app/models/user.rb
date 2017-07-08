@@ -6,7 +6,12 @@ class User < ApplicationRecord
     if first_name.blank? || last_name.blank?
       email
     else
-      "#{first_name} #{last_name}"
+      "#{first_name} #{last_name}".chomp
     end
+  end
+
+  def confirm_email
+    self.email_confirmed_at = Time.current
+    save
   end
 end

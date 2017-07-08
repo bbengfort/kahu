@@ -56,6 +56,7 @@ end
 
 # Test Dependencies
 group :test do
+  gem "email_spec"
   gem "rspec-collection_matchers"
   gem "shoulda-matchers", require: false
   gem "webmock"

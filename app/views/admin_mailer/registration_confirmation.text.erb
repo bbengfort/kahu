@@ -1,0 +1,17 @@
+Dear Kahu Admin,
+
+A user has requested access to <%= @host %>, and needs to be confirmed
+
+- Email: <%= @user.email %>
+- Token: <%= @user.email_confirmation_token %>
+
+To confirm this user, please click this link:
+
+<%= confirm_email_url token: @user.email_confirmation_token %>
+
+Or use the provided token to approve the user.
+
+If this email address is unknown, you can ignore confirmation or remove the user from the database.
+
+Yours Truly,
+The Kahu Server Bot

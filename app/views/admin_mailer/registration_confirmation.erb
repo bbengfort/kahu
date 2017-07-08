@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>Dear Kahu Admin,</p>
+    <p>A user has requested access to <%= @host %>, and needs to be confirmed.</p>
+
+    <ul>
+      <li><strong>Email:</strong> <%= @user.email %></li>
+      <li><strong>Token:</strong> <%= @user.email_confirmation_token %></li>
+    </ul>
+
+    <p>To confirm this user, please click this link:
+       <%= link_to "confirm user", confirm_email_url(token: @user.email_confirmation_token) %>
+       or use the above token to approve the user.</p>
+
+    <p>If this email address is unknown, you can ignore confirmation
+       or remove the user from the database.</p>
+
+    <p>Yours Truly,<br />The Kahu Server Bot</p>
+  </body>
+</html>

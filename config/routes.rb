@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get "/login" => "sessions#new", as: "sign_in"
   delete "/logout" => "sessions#destroy", as: "sign_out"
   get "/register" => "users#new", as: "sign_up"
+  get "/confirm_email/:token" => "email_confirmations#update", as: "confirm_email"
 
   # Host and Replica Resources
   resources :machines do

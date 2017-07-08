@@ -2,18 +2,46 @@ require "rails_helper"
 
 RSpec.describe UsersController, type: :controller do
 
-    describe "GET new" do
-        before do
-            get :new
-        end
+    describe "#new" do
+      it "should render the registration template" do
+        get :new
+        expect(response).to have_http_status(:ok)
+        expect(response).to render_template("users/new")
+      end
+    end
 
-        it "responds with success" do
-            expect(response).to have_http_status(:ok)
-        end
+    describe "#create" do
+      context "without valid attribues" do
+        it "should validate email uniqueness"
+        it "should require a strong password"
+      end
 
-        it "renders register template" do
-            expect(response).to render_template("users/new")
+      context "with valid attributes" do
+        it "creates user and sends confirmation email" do
+          email = "user@example.com"
+
+          post :create, params: {user: { email: email, password: "password" }}
+          expect(controller.send :current_user).to be_nil
+          expect(last_email_confirmation_token).to be_present
+          should_deliver_email(
+            to: Rails.application.secrets.kahu_admin_email,
+            subject: "User Requesting Access to Kahu"
+          )
         end
+      end
+    end
+
+    private
+
+    def should_deliver_email(to:, subject:)
+      expect(ActionMailer::Base.deliveries).not_to be_empty
+      email = ActionMailer::Base.deliveries.last
+      expect(email).to deliver_to(to)
+      expect(email).to have_subject(subject)
+    end
+
+    def last_email_confirmation_token
+      User.last.email_confirmation_token
     end
 
 end

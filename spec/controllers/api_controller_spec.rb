@@ -54,7 +54,7 @@ RSpec.describe InheritsFromApiController, type: :controller do
 
   context "when a user is logged in" do
     before do
-        user = User.new
+        user = User.new(email_confirmed_at: Time.current)
         sign_in_as(user)
     end
 

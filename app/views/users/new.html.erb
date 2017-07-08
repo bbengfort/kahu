@@ -9,6 +9,18 @@
       </div>
 
       <div class="panel-body">
+        <% if @user.errors.any? %>
+        <div class="row">
+          <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <div class="alerts">
+              <div class="alert alert-danger" role="alert">
+                Could not register new user!
+              </div>
+            </div>
+          </div>
+        </div>
+        <% end %>
+
         <%= render partial: '/users/form' %>
       </div>
 
