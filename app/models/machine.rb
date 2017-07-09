@@ -20,6 +20,19 @@ class Machine < ApplicationRecord
     domain.nil? || domain.empty? ? ip_address : domain
   end
 
+  def health
+    case
+    when last_seen.nil?
+      return UNKNOWN
+    when self.last_seen > 10.minutes.ago
+      return ONLINE
+    when self.last_seen > 1.hour.ago
+      return UNRESPONSIVE
+    else
+      return OFFLINE
+    end
+  end
+
   private
 
   def generate_api_key

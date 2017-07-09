@@ -6,7 +6,7 @@
       <h2><%= @machine.hostname.capitalize %>  <small>(<%= @machine.addressed_by %>)</small></h2>
       <ul class="list-inline pull-left">
         <li><span class="light-indicator <%= @machine.active ? "text-success" : "text-danger" %>"><%= icon("circle") %></span> status: <%= @machine.active ? "active" : "inactive" %><li>
-        <li><span class="light-indicator text-muted"><%= icon("circle") %></span> health: unknown<li>
+        <li><span class="light-indicator health-<%= @machine.health %>"><%= icon("circle") %></span> health: <%= @machine.health %><li>
       </ul>
       <div class="pull-right">
         <a href="<%= machines_path %>" class="btn btn-primary btn-sm">
@@ -194,7 +194,7 @@
       ]);
       handler.bounds.extendWith(markers);
       handler.fitMapToBounds();
-      handler.getMap().setZoom(10); 
+      handler.getMap().setZoom(10);
   }
   );
 </script>

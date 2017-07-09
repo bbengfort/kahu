@@ -48,6 +48,63 @@ RSpec.describe Machine, type: :model do
     expect(m.addressed_by).to eq(m.domain)
   end
 
+  describe "health status" do
+
+    it "should be unknown when nil" do
+      m = Machine.new(hostname: "foo")
+      expect(m.health).to eq(UNKNOWN)
+
+      m.last_seen = Time.now
+      expect(m.health).not_to eq(UNKNOWN)
+    end
+
+    it "should be online if last seen within 10 minutes" do
+      m = Machine.new(hostname: "foo", last_seen: 5.minutes.ago)
+      expect(m.health).to eq(ONLINE)
+
+      m.last_seen = 9.minutes.ago
+      expect(m.health).to eq(ONLINE)
+
+      m.last_seen = 10.minutes.ago
+      expect(m.health).not_to eq(ONLINE)
+    end
+
+    it "should be unresponsive if last seen within an hour" do
+      m = Machine.new(hostname: "foo", last_seen: 5.minutes.ago)
+      expect(m.health).not_to eq(UNRESPONSIVE)
+
+      m.last_seen = 10.minutes.ago
+      expect(m.health).to eq(UNRESPONSIVE)
+
+      m.last_seen = 59.minutes.ago
+      expect(m.health).to eq(UNRESPONSIVE)
+
+      m.last_seen = 60.minutes.ago
+      expect(m.health).not_to eq(UNRESPONSIVE)
+    end
+
+    it "should be offline if last seen more than an hour ago" do
+      m = Machine.new(hostname: "foo", last_seen: 5.minutes.ago)
+      expect(m.health).not_to eq(OFFLINE)
+
+      m.last_seen = 60.minutes.ago
+      expect(m.health).to eq(OFFLINE)
+
+      m.last_seen = 1.day.ago
+      expect(m.health).to eq(OFFLINE)
+
+      m.last_seen = 1.week.ago
+      expect(m.health).to eq(OFFLINE)
+
+      m.last_seen = 1.month.ago
+      expect(m.health).to eq(OFFLINE)
+
+      m.last_seen = 1.year.ago 
+      expect(m.health).to eq(OFFLINE)
+    end
+
+  end
+
   context "when geolocating" do
 
     it "should lookup latitude and longitude on create" do

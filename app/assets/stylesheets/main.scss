@@ -80,3 +80,22 @@ footer p {
 .clickable-row {
     cursor: pointer;
 }
+
+
+/* machine status */
+
+.health-unknown {
+    color: $gray-light;
+}
+
+.health-online {
+    color: $brand-success;
+}
+
+.health-unresponsive {
+    color: $brand-warning;
+}
+
+.health-offline  {
+    color: $brand-danger;
+}

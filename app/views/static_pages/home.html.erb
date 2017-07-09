@@ -62,11 +62,11 @@
           <tr>
             <td>
               <!-- Active -->
-              <span class="text-<%= m.active ? :success : :danger %>" title="Active">
+              <span class="text-<%= m.active ? :success : :danger %>" title="<%= m.active ? "Active" : "Inactive" %>">
                 <%= icon(:circle) %>
               </span>
               <!-- Health -->
-              <span class="text-muted" title="Health">
+              <span class="health-<%= m.health %>" title="Health: <%= m.health.capitalize %>">
                 <%= icon(:circle) %>
               </span>
             </td>

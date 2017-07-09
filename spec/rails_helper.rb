@@ -63,7 +63,8 @@ RSpec.configure do |config|
   # Stub external requests
   config.before(:each) do
     rpath = File.expand_path('fixtures/geoip_response.json', File.dirname(__FILE__))
-    stub_request(:get, "https://geoip.maxmind.com/geoip/v2.1/city/192.168.1.1").
+    uri_template = Addressable::Template.new "https://geoip.maxmind.com/geoip/v2.1/city/{ipaddr}"
+    stub_request(:get, uri_template).
          with(headers: {
            'Accept'=>'*/*', 'Authorization'=>'Basic Og==', 'User-Agent'=>'Ruby',
            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
