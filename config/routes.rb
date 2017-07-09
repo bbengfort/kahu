@@ -28,7 +28,8 @@ Rails.application.routes.draw do
   # API Routes
   namespace :api do
       resources :status, only: :index
-      resources :heartbeat, only: :create 
+      resources :heartbeat, only: :create
+      resources :replicas, only: :index
   end
 
 end
