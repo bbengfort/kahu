@@ -24,7 +24,7 @@ class Machine < ApplicationRecord
     case
     when last_seen.nil?
       return UNKNOWN
-    when self.last_seen > 10.minutes.ago
+    when self.last_seen > 2.minutes.ago
       return ONLINE
     when self.last_seen > 1.hour.ago
       return UNRESPONSIVE

@@ -59,18 +59,21 @@ RSpec.describe Machine, type: :model do
     end
 
     it "should be online if last seen within 10 minutes" do
-      m = Machine.new(hostname: "foo", last_seen: 5.minutes.ago)
+      m = Machine.new(hostname: "foo", last_seen: 20.seconds.ago)
       expect(m.health).to eq(ONLINE)
 
-      m.last_seen = 9.minutes.ago
+      m.last_seen = 1.minutes.ago
       expect(m.health).to eq(ONLINE)
 
-      m.last_seen = 10.minutes.ago
+      m.last_seen = 111.seconds.ago
+      expect(m.health).to eq(ONLINE)
+
+      m.last_seen = 2.minutes.ago
       expect(m.health).not_to eq(ONLINE)
     end
 
     it "should be unresponsive if last seen within an hour" do
-      m = Machine.new(hostname: "foo", last_seen: 5.minutes.ago)
+      m = Machine.new(hostname: "foo", last_seen: 1.minute.ago)
       expect(m.health).not_to eq(UNRESPONSIVE)
 
       m.last_seen = 10.minutes.ago
@@ -99,7 +102,7 @@ RSpec.describe Machine, type: :model do
       m.last_seen = 1.month.ago
       expect(m.health).to eq(OFFLINE)
 
-      m.last_seen = 1.year.ago 
+      m.last_seen = 1.year.ago
       expect(m.health).to eq(OFFLINE)
     end
 
