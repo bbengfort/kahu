@@ -8,6 +8,9 @@ Bundler.require(*Rails.groups)
 
 module Kahu
   class Application < Rails::Application
+    # Set timezone to estern time
+    config.time_zone = "America/New_York"
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
