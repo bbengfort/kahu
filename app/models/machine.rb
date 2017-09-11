@@ -33,6 +33,10 @@ class Machine < ApplicationRecord
     end
   end
 
+  def procs
+    self.replicas.map { |r| r.name }
+  end
+
   private
 
   def generate_api_key

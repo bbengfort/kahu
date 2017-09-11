@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       resources :status, only: :index
       resources :heartbeat, only: :create
       resources :replicas, only: :index
+      resources :hosts, only: :index
   end
 
 end
