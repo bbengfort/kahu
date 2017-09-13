@@ -20,7 +20,8 @@ module Api
       response = {
         machine: @machine.hostname,
         ipaddr: @machine.ip_address.to_s,
-        success: true
+        success: true,
+        active: @machine.active
       }
       render json: response.as_json
     end

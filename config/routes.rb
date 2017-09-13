@@ -29,7 +29,7 @@ Rails.application.routes.draw do
   namespace :api do
       resources :status, only: :index
       resources :heartbeat, only: :create
-      resources :latency, only: :create
+      resources :latency, only: [:index, :create]
       resources :replicas, only: :index
       resources :hosts, only: :index
   end

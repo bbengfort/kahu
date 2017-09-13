@@ -1,6 +1,13 @@
 module Api
   class LatencyController < ApiController
 
+    def index
+      # Return the source and target information to conduct latency measures.
+      targets = Machine.where({active: true}).where.not({id: @machine.id})
+      response = TargetsSerializer.new(@machine, targets)
+      render json: response.as_json
+    end
+
     def create
       @latency = find_latency
       @latency.update(latency_params)
