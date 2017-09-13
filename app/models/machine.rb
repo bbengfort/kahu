@@ -3,6 +3,7 @@ require 'geoip'
 class Machine < ApplicationRecord
 
   has_many :replicas, dependent: :destroy
+  has_many :latencies, :class_name => "Latency", :foreign_key => "source_id"
 
   validates :hostname,
     presence: true,

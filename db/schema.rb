@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170708175021) do
+ActiveRecord::Schema.define(version: 20170913005111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "latencies", force: :cascade do |t|
+    t.bigint "source_id", null: false
+    t.bigint "target_id", null: false
+    t.integer "messages", default: 0
+    t.integer "timeouts", default: 0
+    t.float "total", default: 0.0
+    t.float "mean", default: 0.0
+    t.float "stddev", default: 0.0
+    t.float "variance", default: 0.0
+    t.float "fastest", default: 0.0
+    t.float "slowest", default: 0.0
+    t.float "range", default: 0.0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_id"], name: "index_latencies_on_source_id"
+    t.index ["target_id"], name: "index_latencies_on_target_id"
+  end
 
   create_table "machines", force: :cascade do |t|
     t.boolean "active", default: true
@@ -52,7 +70,6 @@ ActiveRecord::Schema.define(version: 20170708175021) do
     t.string "remember_token", limit: 128, null: false
     t.string "first_name"
     t.string "last_name"
-    t.boolean "administrator", default: false
     t.string "email_confirmation_token", default: "", null: false
     t.datetime "email_confirmed_at"
     t.boolean "is_admin", default: false
@@ -60,5 +77,7 @@ ActiveRecord::Schema.define(version: 20170708175021) do
     t.index ["remember_token"], name: "index_users_on_remember_token"
   end
 
+  add_foreign_key "latencies", "machines", column: "source_id"
+  add_foreign_key "latencies", "machines", column: "target_id"
   add_foreign_key "replicas", "machines"
 end
