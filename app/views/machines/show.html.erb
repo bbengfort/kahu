@@ -174,12 +174,12 @@
     <!-- Latencies -->
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4 class="panel-title">Connection Latencies</h4>
+        <h4 class="panel-title">Connection Latencies (milliseconds)</h4>
       </div>
       <table class="table table-hover">
         <thead>
-          <th>Source</th>
-          <th>Target</th>
+          <th class="text-center">Source</th>
+          <th class="text-center">Target</th>
           <th class="text-center">Messages</th>
           <th class="text-center">Timeouts</th>
           <th class="text-center">&mu;</th>
@@ -191,14 +191,14 @@
           <% if @machine.latencies.count > 0 %>
             <% @machine.latencies.order(:updated_at).each do |l| %>
             <tr>
-              <td ><%= l.source.hostname %></td>
-              <td ><%= l.target.hostname %></td>
+              <td class="text-center"><%= l.source.hostname %></td>
+              <td class="text-center"><%= l.target.hostname %></td>
               <td class="text-center"><%= l.messages %></td>
               <td class="text-center"><%= l.timeouts %></td>
-              <td class="text-center"><%= l.mean %></td>
-              <td class="text-center"><%= l.stddev %></td>
-              <td class="text-center"><%= l.fastest %></td>
-              <td class="text-center"><%= l.slowest %></td>
+              <td class="text-center"><%= "%.3f" % l.mean %> ms</td>
+              <td class="text-center"><%= "%.3f" % l.stddev %> ms</td>
+              <td class="text-center"><%= "%.3f" % l.fastest %> ms</td>
+              <td class="text-center"><%= "%.3f" % l.slowest %> ms</td>
             </tr>
             <% end %>
           <% else %>
