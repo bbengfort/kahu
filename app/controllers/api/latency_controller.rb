@@ -2,6 +2,8 @@ module Api
   class LatencyController < ApiController
 
     def index
+      require_machine
+
       # Return the source and target information to conduct latency measures.
       targets = Machine.where({active: true}).where.not({id: @machine.id})
       response = TargetsSerializer.new(@machine, targets)
@@ -34,6 +36,12 @@ module Api
         :messages, :timeouts, :total, :mean, :stddev,
         :variance, :fastest, :slowest, :range
       )
+    end
+
+    def require_machine
+      if @machine.nil?
+        raise ActiveRecord::RecordNotFound.new("latency targets must be requested by a machine")
+      end
     end
 
   end
