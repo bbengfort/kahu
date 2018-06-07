@@ -15,9 +15,13 @@ Default application views for the application
 ##########################################################################
 
 import kahu
+import json
 
 from datetime import datetime
 
+from replicas.models import Location
+
+from django.conf import settings
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -37,6 +41,20 @@ class Overview(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Overview, self).get_context_data(**kwargs)
         context['dashboard'] = 'overview'
+        context['google_maps_api'] = settings.GOOGLE_MAPS_API_KEY
+
+        markers = []
+        for location in Location.objects.all():
+            markers.append({
+                "lat": float(location.latitude),
+                "lng": float(location.longitude),
+                "title": location.location,
+                "replicas": [
+                    replica.hostname for replica in location.replicas.all()
+                ]
+            })
+
+        context['markers'] = json.dumps(markers)
         return context
 
 

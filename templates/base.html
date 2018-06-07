@@ -26,6 +26,8 @@
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
   {% endblock %}
 
+  {% block extrahead %}{% endblock %}
+
 </head>
 <body class="{% block body-class %}fixed-nav sticky-footer bg-dark{% endblock %}" id="page-top">
   {% block body %}

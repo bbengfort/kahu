@@ -15,6 +15,7 @@ Database models for the replicas app.
 ##########################################################################
 
 from django.db import models
+from django.db import transaction
 
 from model_utils.models import TimeStampedModel
 
@@ -79,7 +80,7 @@ class Replica(TimeStampedModel):
 
 
     def __str__(self):
-        return "{} ({}:{})".format(self.hostname, self.ipaddr, self.port)
+        return "{} ({}:{})".format(self.hostname, self.ip_address, self.port)
 
 
 ##########################################################################
@@ -185,6 +186,43 @@ class Latency(TimeStampedModel):
         get_latest_by = "modified"
         unique_together = ("source", "target")
         verbose_name_plural = "latencies"
+
+    @classmethod
+    def update_from_ping(cls, id, latency, timeout=False):
+        """
+        Create or update a latency record between the source and target
+        replicas by incrementing the number of messages, the total, the sum of
+        squares values and the fastest and slowest values.
+
+        The pre-save latency signal will update all other computed statistcs.
+
+        If latency is <= 0 -- this is considered a timeout and timeouts will
+        be incremented instead of messages and distribution statistics.
+
+        This method uses select_for_update to ensure that the database table
+        is locked to prevent concurrent updates to the table from becoming
+        inconsistent with respect to the data collected.
+        """
+        with transaction.atomic():
+            record = cls.objects.select_for_update(of="self").get(id=id)
+
+            if timeout or latency <= 0.0:
+                record.timeouts += 1
+
+            else:
+                record.messages += 1
+                record.total += latency
+                record.squares += latency * latency
+
+                if record.messages == 1 or latency < record.fastest:
+                    record.fastest = latency
+
+                if record.messages == 1 or latency > record.slowest:
+                    record.slowest = latency
+
+            record.save()
+
+        return record
 
 
     def __str__(self):

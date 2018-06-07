@@ -106,7 +106,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'rest_framework',
     'social_django',
-    'replicas', 
+    'replicas',
 ]
 
 # Request handling
@@ -265,3 +265,10 @@ EMAIL_HOST_USER = environ_setting("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = environ_setting("EMAIL_HOST_PASSWORD", "")
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = '[KAHU] '
+
+
+##########################################################################
+## Google Maps
+##########################################################################
+
+GOOGLE_MAPS_API_KEY = environ_setting("GOOGLE_MAPS_API_KEY")

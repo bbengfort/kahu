@@ -22,4 +22,9 @@ from django.apps import AppConfig
 ##########################################################################
 
 class ReplicasConfig(AppConfig):
-    name = 'replicas'
+
+    name = "replicas"
+    verbose_name = "Replica Management"
+
+    def ready(self):
+        import replicas.signals #noqa
