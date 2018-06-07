@@ -40,16 +40,6 @@ class Overview(LoginRequiredMixin, TemplateView):
         return context
 
 
-class Replicas(LoginRequiredMixin, TemplateView):
-
-    template_name = "site/replicas.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(Replicas, self).get_context_data(**kwargs)
-        context['dashboard'] = 'replicas'
-        return context
-
-
 ##########################################################################
 ## API Views
 ##########################################################################

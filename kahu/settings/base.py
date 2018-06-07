@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'rest_framework',
     'social_django',
+    'replicas', 
 ]
 
 # Request handling
