@@ -18,6 +18,24 @@ from enum import Enum
 
 
 ##########################################################################
+## Helpers
+##########################################################################
+
+def parse_bool(val):
+    if isinstance(val, str):
+        val = val.lower()
+
+        if val.startswith('t'):
+            return True
+        if val.startswith('f'):
+            return False
+
+        val = int(val)
+
+    return bool(val)
+
+
+##########################################################################
 ## Enumerations
 ##########################################################################
 
