@@ -1,4 +1,13 @@
-"""kahu URL Configuration
+# kahu.urls
+# Kahu URL configuration
+#
+# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Created: Wed Jun 06 16:16:16 2018 -0400
+#
+# ID: urls.py [] benjamin@bengfort.com $
+
+"""
+Kahu URL configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -13,9 +22,42 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+##########################################################################
+## Imports
+##########################################################################
+
 from django.contrib import admin
-from django.urls import path
+from rest_framework import routers
+from django.urls import path, include
+
+from kahu.views import *
+
+
+##########################################################################
+## Endpoint Discovery
+##########################################################################
+
+router = routers.DefaultRouter()
+router.register(r'status', HeartbeatViewSet, "status")
+
+
+##########################################################################
+## URL Patterns
+##########################################################################
 
 urlpatterns = [
+    # Admin URLs
     path('admin/', admin.site.urls),
+
+    # Application URLs
+    path('', Overview.as_view(), name="overview"),
+    path('replicas/', Replicas.as_view(), name="replicas"),
+
+    # Authentication URLs
+    path('user/', include(('social_django.urls', 'social_django'), namespace='social')),
+    path('user/', include('django.contrib.auth.urls')),
+
+    ## REST API Urls
+    path('api/', include((router.urls, 'rest_framework'), namespace="api")),
 ]

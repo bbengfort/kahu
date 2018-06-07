@@ -1,0 +1,19 @@
+{% extends 'page.html' %}
+
+{% block content %}
+<!-- dashboard container -->
+<div class="container-fluid">
+
+  {% block breadcrumbs %}
+  <!-- breadcrumbs-->
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url 'overview' %}">Dashboard</a>
+    </li>
+  </ol>
+  {% endblock %}
+
+  {% block dashboard %}{% endblock %}
+
+</div><!-- dashboard container ends -->
+{% endblock %}
