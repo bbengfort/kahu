@@ -40,7 +40,7 @@ from replicas.views import *
 ##########################################################################
 
 router = routers.DefaultRouter()
-router.register(r'status', HeartbeatViewSet, "status")
+router.register(r'status', StatusViewSet, "status")
 
 
 ##########################################################################

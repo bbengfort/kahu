@@ -19,6 +19,7 @@ import json
 
 from datetime import datetime
 
+from replicas.models import Replica
 from replicas.models import Location
 
 from django.conf import settings
@@ -42,6 +43,12 @@ class Overview(LoginRequiredMixin, TemplateView):
         context = super(Overview, self).get_context_data(**kwargs)
         context['dashboard'] = 'overview'
         context['google_maps_api'] = settings.GOOGLE_MAPS_API_KEY
+        context['status'] = {
+            "active": Replica.objects.active().count(),
+            "online": Replica.objects.online().active().count(),
+            "unresponsive": Replica.objects.unresponsive().active().count(),
+            "offline": Replica.objects.offline().active().count(),
+        }
 
         markers = []
         for location in Location.objects.all():
@@ -62,7 +69,7 @@ class Overview(LoginRequiredMixin, TemplateView):
 ## API Views
 ##########################################################################
 
-class HeartbeatViewSet(viewsets.ViewSet):
+class StatusViewSet(viewsets.ViewSet):
     """
     Endpoint for heartbeat checking, includes status and version.
     """

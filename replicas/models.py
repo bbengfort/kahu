@@ -16,8 +16,13 @@ Database models for the replicas app.
 
 from django.db import models
 from django.db import transaction
-
+from django.utils.timezone import utc
 from model_utils.models import TimeStampedModel
+
+from .utils import Health
+from .managers import ReplicaManager
+
+from datetime import datetime
 
 
 ##########################################################################
@@ -73,11 +78,31 @@ class Replica(TimeStampedModel):
         help_text="generated API key that identifies a host"
     )
 
+
+    # Replicas manager
+    objects = ReplicaManager()
+
+
     class Meta:
         db_table = "replicas"
         get_latest_by = "last_seen"
         ordering = ("precedence", "last_seen")
 
+    def health(self):
+        """
+        Returns the status of the replica based on the last seen date
+        """
+        if not self.last_seen:
+            return Health.UNKNOWN
+
+        delta = datetime.now(utc) - self.last_seen
+        if delta.total_seconds() <= 120:
+            return Health.ONLINE
+
+        if delta.total_seconds() <= 3600:
+            return Health.UNRESPONSIVE
+
+        return Health.OFFLINE
 
     def __str__(self):
         return "{} ({}:{})".format(self.hostname, self.ip_address, self.port)
