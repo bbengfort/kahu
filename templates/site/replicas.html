@@ -16,7 +16,7 @@
 {% block dashboard %}
   <div class="card mb-3">
     <div class="card-header">
-      <i class="fa fa-database"></i> Replica Processes</div>
+      <i class="fa fa-database"></i> {{ replicas_type|title}} Replica Processes</div>
     <div class="card-body">
 
       <div class="row mb-2">
@@ -32,12 +32,24 @@
                 <i class="fa fa-filter"></i> Filter hosts <span class="caret"></span>
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                {% with params=request.GET.urlencode %}
-                <a class="dropdown-item" href="{% query_string 'active' 'true' params %}">Active Hosts</a>
-                <a class="dropdown-item" href="{% query_string 'active' 'false' params %}">Inactive Hosts</a>
+                <a class="dropdown-item" href="{% query_string 'active' 'true' %}">
+                  <i class="fa fa-circle text-success"></i> Active Hosts
+                </a>
+                <a class="dropdown-item" href="{% query_string 'active' 'false' %}">
+                  <i class="fa fa-circle text-danger"></i> Inactive Hosts
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% query_string 'health' 'online' %}">
+                  <i class="fa fa-circle text-success"></i> Online Hosts
+                </a>
+                <a class="dropdown-item" href="{% query_string 'health' 'unresponsive' %}">
+                  <i class="fa fa-circle text-warning"></i> Unresponsive Hosts
+                </a>
+                <a class="dropdown-item" href="{% query_string 'health' 'offline' %}">
+                  <i class="fa fa-circle text-danger"></i> Offline Hosts
+                </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'replicas' %}">All Hosts</a>
-                {% endwith %}
               </div>
             </div>
           </div>
@@ -82,42 +94,11 @@
       </div>
 
       <!-- replicas pagination -->
-      <nav class="pull-right" aria-label="...">
-        <ul class="pagination">
-          <li class="page-item{% if not page_obj.has_previous %} disabled{% endif %}">
-            <a class="page-link" href="{% if page_obj.has_previous %}{% query_string 'page' page_obj.previous_page_number request.GET.urlencode %}{% else %}#{% endif %}">
-              <span aria-hidden="true">&laquo;</span>
-              <span class="sr-only">Previous</span>
-            </a>
-          </li>
-
-          {% for page in paginator.page_range %}
-          {% if page == page_obj.number %}
-          <li class="page-item active">
-            <span class="page-link">
-              {{ page }}
-              <span class="sr-only">(current)</span>
-            </span>
-          </li>
-          {% else %}
-          <li class="page-item">
-            <a class="page-link" href="{% query_string 'page' page request.GET.urlencode %}">{{page}}</a>
-          </li>
-          {% endif %}
-          {% endfor %}
-
-          <li class="page-item{% if not page_obj.has_next %} disabled{% endif %}">
-            <a class="page-link" href="{% if page_obj.has_next %}{% query_string 'page' page_obj.next_page_number request.GET.urlencode %}{% else %}#{% endif %}">
-              <span aria-hidden="true">&raquo;</span>
-              <span class="sr-only">Next</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      {% include "snippets/pagination.html" %}
 
     </div>
     <div class="card-footer small text-muted">
-      {{ paginator.count }} replicas managed
+      {{ paginator.count }} {{ replicas_type }} replica{{ paginator.count|pluralize }}
     </div>
   </div>
 {% endblock %}
