@@ -16,13 +16,10 @@ Database models for the replicas app.
 
 from django.db import models
 from django.db import transaction
-from django.utils.timezone import utc
 from model_utils.models import TimeStampedModel
 
-from .utils import Health
+from .utils import Health, utcnow
 from .managers import ReplicaManager
-
-from datetime import datetime
 
 
 ##########################################################################
@@ -40,9 +37,9 @@ class Replica(TimeStampedModel):
     this duplication is acceptable.
     """
 
-    hostname = models.CharField(
-        max_length=255, null=False, blank=False,
-        help_text="unique identifying name of the host"
+    name = models.CharField(
+        max_length=255, null=False, blank=True, unique=True,
+        help_text="unique name of the replica (hostname-pid) by default"
     )
     active = models.BooleanField(
         default=True,
@@ -51,6 +48,10 @@ class Replica(TimeStampedModel):
     precedence = models.PositiveSmallIntegerField(
         default=0, blank=True,
         help_text="the precedence of the replica over other replicas"
+    )
+    hostname = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="identifying name of the host machine"
     )
     domain = models.CharField(
         max_length=255, null=True, blank=True, default="",
@@ -88,6 +89,15 @@ class Replica(TimeStampedModel):
         get_latest_by = "last_seen"
         ordering = ("precedence", "last_seen")
 
+    @property
+    def address(self):
+        """
+        Composes the address of the replica using domain first, then ipaddr.
+        """
+        if self.domain:
+            return "{}:{}".format(self.domain, self.port)
+        return "{}:{}".format(self.ip_address, self.port)
+
     def health(self):
         """
         Returns the status of the replica based on the last seen date
@@ -95,7 +105,7 @@ class Replica(TimeStampedModel):
         if not self.last_seen:
             return Health.UNKNOWN
 
-        delta = datetime.now(utc) - self.last_seen
+        delta = utcnow() - self.last_seen
         if delta.total_seconds() <= 120:
             return Health.ONLINE
 
@@ -105,7 +115,7 @@ class Replica(TimeStampedModel):
         return Health.OFFLINE
 
     def __str__(self):
-        return "{} ({}:{})".format(self.hostname, self.ip_address, self.port)
+        return "{} ({}:{})".format(self.name, self.ip_address, self.port)
 
 
 ##########################################################################

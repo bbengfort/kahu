@@ -41,6 +41,9 @@ from replicas.views import *
 
 router = routers.DefaultRouter()
 router.register(r'status', StatusViewSet, "status")
+router.register(r'replicas', ReplicaViewSet, "replicas")
+router.register(r'heartbeat', HeartbeatViewSet, "heartbeat")
+router.register(r'latency', LatencyViewSet, "latency")
 
 
 ##########################################################################

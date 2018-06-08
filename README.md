@@ -9,4 +9,5 @@ Kahu is a service that manages replica configurations for my research. Each repl
 
 ## Resources
 
-- Dashboard template based on [Start Bootstrap Admin](https://blackrockdigital.github.io/startbootstrap-sb-admin/index.html) ([GitHub](https://github.com/BlackrockDigital/startbootstrap-sb-admin)). 
+- Dashboard template based on [Start Bootstrap Admin](https://blackrockdigital.github.io/startbootstrap-sb-admin/index.html) ([GitHub](https://github.com/BlackrockDigital/startbootstrap-sb-admin)).
+- Icons from [Font Awesome v4.7.0](https://fontawesome.com/v4.7.0/icons/). 

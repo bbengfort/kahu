@@ -15,6 +15,9 @@
         height: 30px;
     }
   </style>
+
+  <!-- shortcut icon -->
+  <link rel="shortcut icon" href="{% static 'favicon.png' %}">
 {% endblock %}
 
 {% block branding %}
@@ -22,6 +25,9 @@
 {% endblock %}
 
 {% block userlinks %}
+<li>
+  <a href="{% url 'overview' %}">Back to App</a>
+</li>
 {% if user.is_authenticated %}
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">

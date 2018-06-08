@@ -37,6 +37,16 @@ def create_replica_api_key(sender, instance, *args, **kargs):
         instance.api_key = secrets.token_urlsafe(32)
 
 
+@receiver(pre_save, sender=Replica, dispatch_uid="create_replica_unique_name")
+def create_replica_unique_name(sender, instance, *args, **kargs):
+    """
+    Creates a unique name for the replica if it doesn't already have one.
+    """
+    if not instance.name:
+        instance.name = "{}-{}".format(instance.hostname, instance.precedence)
+
+
+
 ##########################################################################
 ## Latency Signals
 ##########################################################################

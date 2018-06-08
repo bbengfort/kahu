@@ -15,11 +15,9 @@ Query managers for replicas models.
 ##########################################################################
 
 from django.db import models
-from django.utils.timezone import utc
+from datetime import timedelta
 
-from .utils import Health
-
-from datetime import datetime, timedelta
+from .utils import Health, utcnow
 
 
 ##########################################################################
@@ -35,7 +33,7 @@ class ReplicaQuerySet(models.QuerySet):
         if status == Health.UNKNOWN:
             return self.filter(last_seen=None)
 
-        now = datetime.now(utc)
+        now = utcnow()
 
         if status == Health.ONLINE:
             return self.filter(last_seen__gte=now-timedelta(seconds=120))

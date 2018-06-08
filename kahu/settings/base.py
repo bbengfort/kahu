@@ -237,6 +237,7 @@ REST_FRAMEWORK = {
     ## API Authentication
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+        'replicas.authentication.ReplicaAuthentication',
     ),
 
     ## Default permissions to access the API

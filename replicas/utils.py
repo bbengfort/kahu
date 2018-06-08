@@ -15,6 +15,8 @@ Utilities and constant enumerations
 ##########################################################################
 
 from enum import Enum
+from datetime import datetime
+from django.utils.timezone import utc
 
 
 ##########################################################################
@@ -33,6 +35,10 @@ def parse_bool(val):
         val = int(val)
 
     return bool(val)
+
+
+def utcnow():
+    return datetime.now(utc)
 
 
 ##########################################################################
