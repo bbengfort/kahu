@@ -114,13 +114,17 @@ class HeartbeatViewSet(viewsets.ViewSet):
         serializer = HeartbeatSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
-                serializers.errors, status=status.HTTP_400_BAD_REQUEST
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
         # Permit an update to the IP address, our version of DDNS
         data = serializer.validated_data
         if data.get("ip_address", None):
             replica.ip_address = data["ip_address"]
+
+        # Update the hostname (in case the replica process executes on a new host)
+        if data.get("hostname", None):
+            replica.hostname = data["hostname"]
 
         # Save the updates to the replica
         replica.save()

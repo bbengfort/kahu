@@ -52,7 +52,8 @@ class LatencySerializer(serializers.ModelSerializer):
 
 class HeartbeatSerializer(serializers.Serializer):
 
-    ip_address = serializers.IPAddressField(allow_null=True)
+    hostname = serializers.CharField(max_length=255, allow_blank=True)
+    ip_address = serializers.IPAddressField(allow_blank=True)
 
 
 class PingSerializer(serializers.Serializer):
