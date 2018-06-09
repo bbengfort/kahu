@@ -14,10 +14,12 @@ Controllers and views for the replicas app (HTML/JSON)
 ## Imports
 ##########################################################################
 
-from .models import Replica
+from .models import Replica, Latency
 from .authentication import MachineUser
+from .serializers import PingSerializer
 from .serializers import ReplicaSerializer
 from .serializers import HeartbeatSerializer
+from .serializers import LatencySerializer
 from .exceptions import ReplicaEndpointOnly
 from .utils import parse_bool, Health, utcnow
 
@@ -150,10 +152,9 @@ class LatencyViewSet(viewsets.ViewSet):
         # For now, return all other unique IP addresses
         # TODO: make this better
         neighbors = Replica.objects.active().exclude(id=replica.id)
-        neighbors = neighbors.order_by('ip_address').distinct('ip_address')
         neighbors = [
             {
-                "hostname": neighbor.hostname,
+                "hostname": neighbor.name,
                 "state": neighbor.health().value,
                 "addr": str(neighbor.ip_address),
                 "dns": neighbor.domain,
@@ -171,4 +172,27 @@ class LatencyViewSet(viewsets.ViewSet):
         """
         For all the pings posted, updates the distribution from the source.
         """
-        pass
+        replica = self.validate_replica(request)
+
+        # Deserialize the request
+        serializer = PingSerializer(data=request.data, many=True)
+        if not serializer.is_valid():
+            return Response(
+                serializers.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        latencies = []
+        for ping in serializer.validated_data:
+            target = Replica.objects.get(name=ping['target'])
+            latency, _ = Latency.objects.get_or_create(
+                source=replica, target=target
+            )
+
+            latencies.append(Latency.update_from_ping(
+                latency.id, ping['latency'], ping['timeout'])
+            )
+
+        # Serialize the response
+        serializer = LatencySerializer(data=latencies, many=True)
+        serializer.is_valid()
+        return Response(serializer.data)

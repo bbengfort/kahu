@@ -14,7 +14,7 @@ JSON serialization of replica model objects
 ## Imports
 ##########################################################################
 
-from .models import Replica
+from .models import Replica, Latency
 from rest_framework import serializers
 
 
@@ -33,6 +33,19 @@ class ReplicaSerializer(serializers.ModelSerializer):
         read_only_fields = ('address',)
 
 
+class LatencySerializer(serializers.ModelSerializer):
+
+    source = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    target = serializers.SlugRelatedField(slug_field="name", read_only=True)
+
+    class Meta:
+        model = Latency
+        fields = (
+            "source", "target", "messages", "timeouts", "fastest",
+            "slowest", "mean", "stddev", "range"
+        )
+
+
 ##########################################################################
 ## API Serializers
 ##########################################################################
@@ -40,3 +53,10 @@ class ReplicaSerializer(serializers.ModelSerializer):
 class HeartbeatSerializer(serializers.Serializer):
 
     ip_address = serializers.IPAddressField(allow_null=True)
+
+
+class PingSerializer(serializers.Serializer):
+
+    target = serializers.CharField()
+    latency = serializers.FloatField()
+    timeout = serializers.BooleanField()

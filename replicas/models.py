@@ -239,7 +239,7 @@ class Latency(TimeStampedModel):
         inconsistent with respect to the data collected.
         """
         with transaction.atomic():
-            record = cls.objects.select_for_update(of="self").get(id=id)
+            record = cls.objects.select_for_update().get(id=id)
 
             if timeout or latency <= 0.0:
                 record.timeouts += 1
