@@ -17,6 +17,7 @@ Singals used by replicas models - imported by apps.py
 import math
 import secrets
 
+from replicas import geoip
 from .models import Replica
 from .models import Latency
 
@@ -28,23 +29,25 @@ from django.db.models.signals import pre_save
 ## Replica Signals
 ##########################################################################
 
-@receiver(pre_save, sender=Replica, dispatch_uid="create_replica_api_key")
-def create_replica_api_key(sender, instance, *args, **kargs):
+@receiver(pre_save, sender=Replica, dispatch_uid="replica_consistency_checks")
+def replica_consistency_checks(sender, instance, *args, **kargs):
     """
-    Creates an API Key for the replica if it doesn't already have one.
+    Performs consistency checks on the replica instance to ensure it's saved
+    correctly. If fields are missing or incorrect, this signal updates the
+    replica to ensure data is correctly saved.
     """
+
+    # Ensure the replica has an associated API key
     if not instance.api_key:
         instance.api_key = secrets.token_urlsafe(32)
 
-
-@receiver(pre_save, sender=Replica, dispatch_uid="create_replica_unique_name")
-def create_replica_unique_name(sender, instance, *args, **kargs):
-    """
-    Creates a unique name for the replica if it doesn't already have one.
-    """
+    # Create a unique name for the replica if it doesn't have one
     if not instance.name:
         instance.name = "{}-{}".format(instance.hostname, instance.precedence)
 
+    # If no location or if IP address has changed, perform GeoIP lookup.
+    if not instance.location or instance.tracker.has_changed('ip_address'):
+        instance.location = geoip.lookup(instance.ip_address)
 
 
 ##########################################################################

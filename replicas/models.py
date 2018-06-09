@@ -16,6 +16,7 @@ Database models for the replicas app.
 
 from django.db import models
 from django.db import transaction
+from model_utils import FieldTracker
 from model_utils.models import TimeStampedModel
 
 from .utils import Health, utcnow
@@ -82,6 +83,9 @@ class Replica(TimeStampedModel):
 
     # Replicas manager
     objects = ReplicaManager()
+
+    # Field Tracker (to detect changes, e.g. with IP address)
+    tracker = FieldTracker()
 
 
     class Meta:

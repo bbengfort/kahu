@@ -274,3 +274,11 @@ EMAIL_SUBJECT_PREFIX = '[KAHU] '
 ##########################################################################
 
 GOOGLE_MAPS_API_KEY = environ_setting("GOOGLE_MAPS_API_KEY")
+
+
+##########################################################################
+## MaxMind
+##########################################################################
+
+GEOIP2_API_USER = environ_setting("GEOIP2_API_USER", "")
+GEOIP2_API_KEY = environ_setting("GEOIP2_API_KEY", "")
