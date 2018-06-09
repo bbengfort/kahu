@@ -27,7 +27,8 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from django.views.generic import ListView
+from django.conf import settings
+from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -39,11 +40,11 @@ HEALTH = "health"
 ## HTML Views
 ##########################################################################
 
-class Replicas(LoginRequiredMixin, ListView):
+class ReplicaList(LoginRequiredMixin, ListView):
 
     model = Replica
     paginate_by = 10
-    template_name = "site/replicas.html"
+    template_name = "site/replica_list.html"
     context_object_name = "replicas"
 
     def parse_query_string(self):
@@ -60,7 +61,7 @@ class Replicas(LoginRequiredMixin, ListView):
         return params
 
     def get_queryset(self):
-        queryset = super(Replicas, self).get_queryset()
+        queryset = super(ReplicaList, self).get_queryset()
         params = self.parse_query_string()
 
         if ACTIVE in params:
@@ -83,9 +84,23 @@ class Replicas(LoginRequiredMixin, ListView):
         return "all"
 
     def get_context_data(self, **kwargs):
-        context = super(Replicas, self).get_context_data(**kwargs)
+        context = super(ReplicaList, self).get_context_data(**kwargs)
         context['dashboard'] = 'replicas'
         context['replicas_type'] = self.get_queryset_title()
+        return context
+
+
+class ReplicaDetail(LoginRequiredMixin, DetailView):
+
+    model = Replica
+    slug_field = "name"
+    template_name = "site/replica_detail.html"
+    context_object_name = "replica"
+
+    def get_context_data(self, **kwargs):
+        context = super(ReplicaDetail, self).get_context_data(**kwargs)
+        context['google_maps_api'] = settings.GOOGLE_MAPS_API_KEY
+        context['dashboard'] = 'replicas'
         return context
 
 

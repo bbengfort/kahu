@@ -49,7 +49,7 @@
                   <i class="fa fa-circle text-danger"></i> Offline Hosts
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'replicas' %}">All Hosts</a>
+                <a class="dropdown-item" href="{% url 'replica-list' %}">All Hosts</a>
               </div>
             </div>
           </div>
@@ -79,7 +79,7 @@
                 {% health replica %}
               </td>
               <td class="text-center">{{ replica.precedence }}</td>
-              <td>{{ replica.name }}</td>
+              <td><a href="{{ replica.get_absolute_url }}">{{ replica.hostname }}</a></td>
               <td><code>{{ replica.ip_address }}:{{ replica.port }}</code></td>
               <td>{{ replica.location.location }}</td>
               <td>{{ replica.last_seen|naturaltime }}</td>

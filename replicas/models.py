@@ -15,6 +15,7 @@ Database models for the replicas app.
 ##########################################################################
 
 from django.db import models
+from django.urls import reverse
 from django.db import transaction
 from model_utils import FieldTracker
 from model_utils.models import TimeStampedModel
@@ -38,7 +39,7 @@ class Replica(TimeStampedModel):
     this duplication is acceptable.
     """
 
-    name = models.CharField(
+    name = models.SlugField(
         max_length=255, null=False, blank=True, unique=True,
         help_text="unique name of the replica (hostname-pid) by default"
     )
@@ -118,6 +119,9 @@ class Replica(TimeStampedModel):
 
         return Health.OFFLINE
 
+    def get_absolute_url(self):
+        return reverse('replica-detail', kwargs={'slug': self.name})
+
     def __str__(self):
         return "{} ({}:{})".format(self.name, self.ip_address, self.port)
 
@@ -150,6 +154,19 @@ class Location(TimeStampedModel):
         db_table = "locations"
         get_latest_by = "modified"
         unique_together = ("latitude", "longitude")
+
+    def get_marker(self):
+        """
+        Returns a JSON representation of the marker for Google Maps.
+        """
+        return {
+            "lat": float(self.latitude),
+            "lng": float(self.longitude),
+            "title": self.location,
+            "replicas": [
+                replica.hostname for replica in self.replicas.all()
+            ]
+        }
 
 
     def __str__(self):

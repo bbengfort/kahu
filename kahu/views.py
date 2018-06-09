@@ -52,14 +52,7 @@ class Overview(LoginRequiredMixin, TemplateView):
 
         markers = []
         for location in Location.objects.all():
-            markers.append({
-                "lat": float(location.latitude),
-                "lng": float(location.longitude),
-                "title": location.location,
-                "replicas": [
-                    replica.hostname for replica in location.replicas.all()
-                ]
-            })
+            markers.append(location.get_marker())
 
         context['markers'] = json.dumps(markers)
         return context

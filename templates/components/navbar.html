@@ -16,7 +16,7 @@
         </a>
       </li>
       <li class="nav-item{% if dashboard == "replicas" %} active{% endif %}" data-toggle="tooltip" data-placement="right" title="Link">
-        <a class="nav-link" href="{% url 'replicas' %}?active=true">
+        <a class="nav-link" href="{% url 'replica-list' %}?active=true">
           <i class="fa fa-fw fa-sitemap"></i>
           <span class="nav-link-text">Replicas</span>
         </a>
@@ -115,7 +115,7 @@
 
       <!-- logout link -->
       <li class="nav-item">
-        <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+        <a class="nav-link" data-toggle="modal" data-target="#logoutModal">
           <i class="fa fa-fw fa-sign-out"></i>Logout</a>
       </li>
     </ul>

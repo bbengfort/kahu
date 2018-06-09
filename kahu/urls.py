@@ -56,7 +56,8 @@ urlpatterns = [
 
     # Application URLs
     path('', Overview.as_view(), name="overview"),
-    path('replicas/', Replicas.as_view(), name="replicas"),
+    path('replicas/', ReplicaList.as_view(), name="replica-list"),
+    path('replicas/<slug:slug>/', ReplicaDetail.as_view(), name="replica-detail"),
 
     # Authentication URLs
     path('user/', include(('social_django.urls', 'social_django'), namespace='social')),

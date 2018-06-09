@@ -6,6 +6,17 @@
 (function($) {
 
   $(document).ready(function() {
+    // Bind the copy and paste buttons
+    $('.pbcopy').click(function(e) {
+      e.preventDefault();
+
+      // Find the sibling text element
+      var input = $($(e.target).data().target)
+      input.select();
+      document.execCommand("copy");
+
+      return false;
+    })
 
     // Update the status and the version from the API.
     $.ajax({
