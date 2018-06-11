@@ -107,6 +107,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'replicas',
+    'geonet',
 ]
 
 # Request handling
@@ -267,6 +268,14 @@ EMAIL_HOST_USER = environ_setting("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = environ_setting("EMAIL_HOST_PASSWORD", "")
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = '[KAHU] '
+
+
+##########################################################################
+## AWS
+##########################################################################
+
+AWS_ACCESS_KEY_ID = environ_setting("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = environ_setting("AWS_SECRET_ACCESS_KEY")
 
 
 ##########################################################################

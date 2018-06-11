@@ -32,6 +32,7 @@ from rest_framework import routers
 from django.urls import path, include
 
 from kahu.views import *
+from geonet.views import *
 from replicas.views import *
 
 
@@ -58,6 +59,7 @@ urlpatterns = [
     path('', Overview.as_view(), name="overview"),
     path('replicas/', ReplicaList.as_view(), name="replica-list"),
     path('replicas/<slug:slug>/', ReplicaDetail.as_view(), name="replica-detail"),
+    path('geonet/', AWSStatus.as_view(), name="geonet"),
 
     # Authentication URLs
     path('user/', include(('social_django.urls', 'social_django'), namespace='social')),

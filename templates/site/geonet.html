@@ -1,0 +1,98 @@
+{% extends 'dashboard.html' %}
+{% load humanize %}
+{% load lights %}
+
+{% block breadcrumbs %}
+<!-- breadcrumbs-->
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="{% url 'overview' %}">Dashboard</a>
+  </li>
+  <li class="breadcrumb-item active">AWS GeoNet</li>
+</ol>
+{% endblock %}
+
+{% block dashboard %}
+  <div class="card mb-3">
+    <div class="card-header">
+      <i class="fa fa-amazon"></i> AWS Instances</div>
+    <div class="card-body">
+
+      <div class="row mb-2">
+        <div class="col-12 text-right">
+          <form action="" method="post">
+            <button id="refreshButton" class="btn btn-dark btn-sm" name="refresh" value="refresh" title="last updated {{ modified }}">
+              <i class="fa fa-refresh"></i> Refresh
+            </button>
+            {% csrf_token %}
+          </form>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th class="text-center">Status</th>
+              <th>Location</th>
+              <th>Zone</th>
+              <th class="d-none d-md-table-cell">Instance</th>
+              <th>Name</th>
+              <th>VM Class</th>
+              <th class="d-none d-md-table-cell">IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for instance in instances %}
+            <tr>
+              <td class="text-center">
+                <!-- status light -->
+                {% instance_state instance %}
+              </td>
+              <td>{{ instance.location|title }}</td>
+              <td>{{ instance.zone }}</td>
+              <td class="d-none d-md-table-cell">{{ instance.instance }}</td>
+              <td>{% if instance.name %}{{ instance.name }}{% else %}&mdash;{% endif %}</td>
+              <td>{{ instance.type }}</td>
+              <td class="d-none d-md-table-cell">{% if instance.ip_address %}{{ instance.ip_address }}{% else %}&mdash;{% endif %}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7">No instances to display</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="card-footer small text-muted">
+      <span class="pull-left">Last updated {{ modified|naturaltime }}</span>
+      <span class="pull-right">{{ num_instances }} instances in {{ num_regions }} regions</span>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+      $("#refreshButton").click(function(e) {
+        var btn = $(e.target);
+        btn.attr("disabled", "disabled");
+
+        var icon = btn.find("i");
+        icon.removeClass("fa-refresh");
+        icon.addClass("fa-spin fa-spinner");
+
+        // Submit the form
+        btn.parent("form").submit();
+        console.log("refreshing instances, this could take a bit!")
+
+      })
+
+    });
+  </script>
+{% endblock %}

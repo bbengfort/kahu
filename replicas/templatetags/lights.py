@@ -44,3 +44,24 @@ def health(replica):
     }
 
     return context
+
+
+@register.inclusion_tag("snippets/light.html")
+def instance_state(instance):
+    state = instance.get('state', 'unknown')
+    color = {
+        'pending': "info",
+        'running': "success",
+        'shutting-down': "warning",
+        'terminated': "secondary",
+        'stopping': "warning",
+        'stopped': "danger",
+    }.get(state, "dark")
+
+    context = {
+        "title": "State: {}".format(state.title()),
+        "class": "text-{}".format(color),
+        "label": state, 
+    }
+
+    return context
