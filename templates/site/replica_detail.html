@@ -48,6 +48,9 @@
         <div class="card-header">
           <i class="fa fa-info-circle"></i> Details
         </div>
+        <div class="card-body">
+          {{ replica.description }}
+        </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <strong>External IP</strong>
@@ -83,7 +86,7 @@
       <!-- location card -->
       <div class="card mb-3">
         <div class="card-header">
-          <i class="fa fa-map-pin"></i> Located in {{ replica.location.location }}
+          <i class="fa fa-map-marker"></i> Located in {{ replica.location.location }}
         </div>
         <div class="card-body">
           <div id="map" style="width: 100%; min-height: 250px;"></div>
@@ -99,7 +102,7 @@
     <div class="col-12">
       <div class="card mb-3">
         <div class="card-header">
-          <i class="fa fa-rss"></i> Ping Latencies (milliseconds)
+          <i class="fa fa-exchange"></i> Ping Latencies (milliseconds)
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -135,8 +138,12 @@
             </table>
           </div>
         </div>
-        <div class="card-footer">
-
+        <div class="card-footer small text-muted">
+          {% if replica.latencies.count > 0 %}
+          Last ping reported {{ replica.latencies.latest.modified|naturaltime }}
+          {% else %}
+          No pings have been reported
+          {% endif %}
         </div>
       </div>
 

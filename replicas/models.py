@@ -43,13 +43,9 @@ class Replica(TimeStampedModel):
         max_length=255, null=False, blank=True, unique=True,
         help_text="unique name of the replica (hostname-pid) by default"
     )
-    active = models.BooleanField(
-        default=True,
-        help_text="the replica is currently under management"
-    )
     precedence = models.PositiveSmallIntegerField(
         default=0, blank=True,
-        help_text="the precedence of the replica over other replicas"
+        help_text="the precedence of the replica over other replicas (PID)"
     )
     hostname = models.CharField(
         max_length=255, null=True, blank=True,
@@ -60,17 +56,25 @@ class Replica(TimeStampedModel):
         help_text="domain name for the specified host if supplied"
     )
     ip_address = models.GenericIPAddressField(
-        null=False, blank=False,
-        help_text="the IP address replicas can connect to"
+        null=False, blank=False, verbose_name="IP Address",
+        help_text="the external IP address replicas can connect to"
     )
     port = models.IntegerField(
         default=3264, blank=False, null=False,
         help_text="the port the replica is listening for consensus on"
     )
+    description = models.TextField(
+        max_length=512, blank=True,
+        help_text="describe the replica or machine resources and host"
+    )
     location = models.ForeignKey(
         'replicas.Location', null=True, blank=True,
         on_delete=models.PROTECT, related_name='replicas',
         help_text="the GeoIP location of the replica",
+    )
+    active = models.BooleanField(
+        default=True,
+        help_text="the replica is currently under management"
     )
     last_seen = models.DateTimeField(
         editable=False, null=True,
