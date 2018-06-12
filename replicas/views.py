@@ -16,10 +16,9 @@ Controllers and views for the replicas app (HTML/JSON)
 
 from .models import Replica, Latency
 from .authentication import MachineUser
-from .serializers import PingSerializer
 from .serializers import ReplicaSerializer
-from .serializers import HeartbeatSerializer
-from .serializers import LatencySerializer
+from .serializers import HeartbeatSerializer, PingSerializer
+from .serializers import LatencySerializer, NeighborSerializer
 from .exceptions import ReplicaEndpointOnly
 from .utils import parse_bool, Health, utcnow
 
@@ -153,8 +152,7 @@ class HeartbeatViewSet(viewsets.ViewSet):
 
         return Response({
             "success": True,
-            "replica": replica.hostname,
-            "ipaddr": replica.ip_address,
+            "replica": replica.name,
             "active": replica.active,
         })
 
@@ -169,30 +167,26 @@ class LatencyViewSet(viewsets.ViewSet):
 
         return request.user.replica
 
-    def list(self, request):
+    @action(detail=False)
+    def neighbors(self, request):
         """
         Returns the neighborhood of other replicas to ping for latency measures
         """
         replica = self.validate_replica(request)
 
-        # For now, return all other unique IP addresses
-        # TODO: make this better
-        neighbors = Replica.objects.active().exclude(id=replica.id)
-        neighbors = [
-            {
-                "hostname": neighbor.name,
-                "state": neighbor.health().value,
-                "addr": str(neighbor.ip_address),
-                "dns": neighbor.domain,
-            }
-            for neighbor in neighbors
-        ]
+        # For now, return all other unique IP addresses that are active.
+        # TODO: return neighbors specific to source (e.g. by cluster).
+        targets = Replica.objects.active().exclude(id=replica.id)
+        serializer = NeighborSerializer(targets, many=True)
+        return Response({"source": replica.name, "targets": serializer.data})
 
-        return Response({
-            "source": replica.hostname,
-            "targets": neighbors,
-        })
-
+    def list(self, request):
+        """
+        Returns a list of the latency distributions for active replicas.
+        """
+        queryset = Latency.objects.filter(source__active=True)
+        serializer = LatencySerializer(queryset, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
         """
@@ -204,7 +198,7 @@ class LatencyViewSet(viewsets.ViewSet):
         serializer = PingSerializer(data=request.data, many=True)
         if not serializer.is_valid():
             return Response(
-                serializers.errors, status=status.HTTP_400_BAD_REQUEST
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
         latencies = []
@@ -219,6 +213,5 @@ class LatencyViewSet(viewsets.ViewSet):
             )
 
         # Serialize the response
-        serializer = LatencySerializer(data=latencies, many=True)
-        serializer.is_valid()
+        serializer = LatencySerializer(latencies, many=True)
         return Response(serializer.data)

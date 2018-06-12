@@ -272,7 +272,7 @@ class Latency(TimeStampedModel):
             else:
                 record.messages += 1
                 record.total += latency
-                record.squares += latency * latency
+                record.squares += (latency * latency)
 
                 if record.messages == 1 or latency < record.fastest:
                     record.fastest = latency
@@ -283,7 +283,6 @@ class Latency(TimeStampedModel):
             record.save()
 
         return record
-
 
     def __str__(self):
         return "{} ⇄ {} μ={:0.3f}ms σ={:0.3f}ms"

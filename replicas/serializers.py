@@ -33,6 +33,18 @@ class ReplicaSerializer(serializers.ModelSerializer):
         read_only_fields = ('address',)
 
 
+class NeighborSerializer(serializers.ModelSerializer):
+
+    state = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Replica
+        fields = ("name", "state", "ip_address", "domain")
+
+    def get_state(self, obj):
+        return obj.health().value
+
+
 class LatencySerializer(serializers.ModelSerializer):
 
     source = serializers.SlugRelatedField(slug_field="name", read_only=True)
