@@ -105,6 +105,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'rest_framework',
+    'rest_framework.authtoken',
     'social_django',
     'replicas',
     'geonet',
@@ -238,7 +239,7 @@ REST_FRAMEWORK = {
     ## API Authentication
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'replicas.authentication.ReplicaAuthentication',
+        'replicas.authentication.KahuTokenAuthentication',
     ),
 
     ## Default permissions to access the API

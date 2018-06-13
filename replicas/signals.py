@@ -21,8 +21,11 @@ from replicas import geoip
 from .models import Replica
 from .models import Latency
 
+from rest_framework.authtoken.models import Token
+
+from django.conf import settings
 from django.dispatch import receiver
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 
 
 ##########################################################################
@@ -73,3 +76,17 @@ def recompute_latency_distribution(sender, instance, *args, **kwargs):
         instance.stddev = math.sqrt(instance.variance)
 
     instance.range = instance.slowest - instance.fastest
+
+
+##########################################################################
+## User Signals
+##########################################################################
+
+@receiver(
+    post_save,
+    sender=settings.AUTH_USER_MODEL,
+    dispatch_uid="assign_user_api_auth_token",
+)
+def assign_user_api_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

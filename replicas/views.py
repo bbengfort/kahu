@@ -19,14 +19,15 @@ from .authentication import MachineUser
 from .serializers import ReplicaSerializer
 from .serializers import HeartbeatSerializer, PingSerializer
 from .serializers import LatencySerializer, NeighborSerializer
-from .exceptions import ReplicaEndpointOnly
+from .permissions import IsMachineUser, IsActiveMachineUser
+from .permissions import IsActiveMachineUserOrReadOnly
 from .utils import parse_bool, Health, utcnow
 
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from django.conf import settings
 from django.views.generic import ListView, DetailView
@@ -122,11 +123,9 @@ class ReplicaViewSet(viewsets.ReadOnlyModelViewSet):
 
 class HeartbeatViewSet(viewsets.ViewSet):
 
-    def create(self, request):
-        # Validate replica via machine user
-        if not isinstance(request.user, MachineUser):
-            raise ReplicaEndpointOnly("only replicas can post heartbeats")
+    permission_classes = (IsAuthenticated, IsMachineUser, )
 
+    def create(self, request):
         # Fetch the replica and update the last seen timestamp
         replica = request.user.replica
         replica.last_seen = utcnow()
@@ -159,20 +158,14 @@ class HeartbeatViewSet(viewsets.ViewSet):
 
 class LatencyViewSet(viewsets.ViewSet):
 
-    def validate_replica(self, request):
-        if not isinstance(request.user, MachineUser):
-            raise ReplicaEndpointOnly(
-                "only replicas can post latencies and request neighbors"
-            )
+    permission_classes = (IsAuthenticated, IsActiveMachineUserOrReadOnly,)
 
-        return request.user.replica
-
-    @action(detail=False)
+    @action(detail=False, permission_classes=(IsActiveMachineUser,))
     def neighbors(self, request):
         """
         Returns the neighborhood of other replicas to ping for latency measures
         """
-        replica = self.validate_replica(request)
+        replica = request.user.replica
 
         # For now, return all other unique IP addresses that are active.
         # TODO: return neighbors specific to source (e.g. by cluster).
@@ -192,7 +185,7 @@ class LatencyViewSet(viewsets.ViewSet):
         """
         For all the pings posted, updates the distribution from the source.
         """
-        replica = self.validate_replica(request)
+        replica = request.user.replica
 
         # Deserialize the request
         serializer = PingSerializer(data=request.data, many=True)
