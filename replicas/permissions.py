@@ -18,6 +18,17 @@ from .authentication import MachineUser
 from rest_framework import permissions
 
 
+class IsAdminOrReadOnly(permissions.IsAdminUser):
+    """
+    Allow admins to POST/PUT/DELETE and all other authenticated users to GET.
+    """
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return super(IsAdminOrReadOnly, self).has_permission(request, view)
+
+
 class IsMachineUser(permissions.BasePermission):
     """
     Allow a machine user to access this resource, but not a human user.

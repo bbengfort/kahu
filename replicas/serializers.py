@@ -24,12 +24,21 @@ from rest_framework import serializers
 
 class ReplicaSerializer(serializers.ModelSerializer):
 
-    pid = serializers.IntegerField(source="precedence")
-    ipaddr = serializers.IPAddressField(source="ip_address")
+    pid = serializers.IntegerField(
+        source="precedence", label="PID", required=False,
+        help_text="the precedence of the replica in the cluster",
+    )
+    ipaddr = serializers.IPAddressField(
+        source="ip_address", label="IP Address", required=True,
+        help_text="the external IP address to connect to"
+    )
 
     class Meta:
         model = Replica
-        fields = ("pid", "name", "address", "hostname", "ipaddr", "port")
+        fields = (
+            "pid", "name", "address", "hostname", "description",
+            "ipaddr", "domain", "port",
+        )
         read_only_fields = ('address',)
 
 
@@ -73,3 +82,8 @@ class PingSerializer(serializers.Serializer):
     target = serializers.CharField()
     latency = serializers.FloatField()
     timeout = serializers.BooleanField()
+
+
+class ActivateSerializer(serializers.Serializer):
+
+    active = serializers.BooleanField() 

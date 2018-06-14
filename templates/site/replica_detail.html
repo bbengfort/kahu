@@ -24,7 +24,7 @@
           {{ replica.name|title }}
           <small class="text-muted">({{ replica.address }})</small>
         </h2>
-        <ul class="list-unstyled list-inline">
+        <ul class="list-unstyled list-inline pull-left">
           <li class="list-inline-item">
             <!-- status light -->
             {% active replica %}
@@ -36,7 +36,21 @@
             health: {{ replica.health.value }}
           </li>
         </ul>
-        <hr />
+        <div class="btn-group pull-right" style="margin-top: -.25rem" role="group">
+          {% if replica.active %}
+          <button class="btn btn-sm btn-danger activator" type="button"
+                  data-active="false" data-target="{% url 'api:replicas-activate' replica.id %}">
+            <i class="fa fa-arrow-circle-down"></i> Deactivate
+          </button>
+          {% else %}
+          <button class="btn btn-sm btn-success activator" type="button"
+                  data-active="true" data-target="{% url 'api:replicas-activate' replica.id %}">
+            <i class="fa fa-arrow-circle-up"></i> Activate
+          </button>
+          {% endif %}
+        </div>
+        <div class="clearfix"></div>
+        <hr class="mt-0" />
     </div>
   </div>
 
@@ -163,6 +177,7 @@
     var map = null;
     var marker = null;
     var data = {{ replica.location.get_marker|safe }};
+    var csrf = "{{ csrf_token }}";
 
     function initMap() {
       const content = `
@@ -186,6 +201,30 @@
       marker.addListener('click', function() { info.open(map, marker)});
 
     }
+
+    $(document).ready(function() {
+
+      // Activate/Deactivate button handlers
+      $(".activator").click(function(e) {
+        var data = $(this).data()
+        $.ajax({
+          url: data.target,
+          method: "PUT",
+          dataType: "json",
+          data: {active: data.active},
+          headers: {"X-CSRFToken": csrf}, 
+          success: function(data, status, jqxhr) {
+            if (data.success) {
+              location.reload();
+            }
+          },
+          error: function(data, status, jqxhr) {
+            console.log(data.responseJSON);
+          }
+        });
+      })
+
+    })
   </script>
 
   <!-- google maps javascript -->

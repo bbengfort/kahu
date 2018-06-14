@@ -16,11 +16,12 @@ Controllers and views for the replicas app (HTML/JSON)
 
 from .models import Replica, Latency
 from .authentication import MachineUser
-from .serializers import ReplicaSerializer
+from .serializers import ReplicaSerializer, ActivateSerializer
 from .serializers import HeartbeatSerializer, PingSerializer
 from .serializers import LatencySerializer, NeighborSerializer
 from .permissions import IsMachineUser, IsActiveMachineUser
 from .permissions import IsActiveMachineUserOrReadOnly
+from .permissions import IsAdminOrReadOnly
 from .utils import parse_bool, Health, utcnow
 
 from rest_framework import status
@@ -110,15 +111,55 @@ class ReplicaDetail(LoginRequiredMixin, DetailView):
 ## API Views
 ##########################################################################
 
-class ReplicaViewSet(viewsets.ReadOnlyModelViewSet):
+class ReplicaViewSet(viewsets.ModelViewSet):
 
     serializer_class = ReplicaSerializer
-    queryset = Replica.objects.active()
+    queryset = Replica.objects.all()
+    permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
 
     @action(detail=False, permission_classes=[IsAdminUser])
     def tokens(self, request):
         data = self.get_queryset().values('name', 'api_key')
         return Response(data)
+
+    @action(detail=True, methods=['post', 'put'], permission_classes=(IsAuthenticated,))
+    def activate(self, request, pk=None):
+        replica = self.get_object()
+        serializer = ActivateSerializer(data=request.data)
+        if serializer.is_valid():
+            if replica.active:
+                if serializer.data['active']:
+                    success = False
+                    message = "replica {} already active"
+                else:
+                    success = True
+                    message = "replica {} deactivated"
+            else:
+                if serializer.data['active']:
+                    success = True
+                    message = "replica {} activated"
+                else:
+                    success = False
+                    message = "replica {} already inactive"
+
+            replica.active = serializer.data['active']
+            replica.save()
+            return Response({
+                "success": success, "message": message.format(replica.name)
+            })
+        else:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def get_queryset(self):
+        """
+        Returns only active replicas on list.
+        """
+        queryset = super(ReplicaViewSet, self).get_queryset()
+        if self.action == "list":
+            queryset = queryset.active()
+        return queryset
 
 
 class HeartbeatViewSet(viewsets.ViewSet):

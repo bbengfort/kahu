@@ -79,7 +79,11 @@
                 {% health replica %}
               </td>
               <td class="text-center">{{ replica.precedence }}</td>
-              <td><a href="{{ replica.get_absolute_url }}">{{ replica.hostname }}</a></td>
+              <td>
+                <a href="{{ replica.get_absolute_url }}">
+                  {% if replica.hostname %}{{ replica.hostname }}{% else %}{{ replica.name }}{% endif %}
+                </a>
+              </td>
               <td><code>{{ replica.ip_address }}:{{ replica.port }}</code></td>
               <td>{{ replica.location.location }}</td>
               <td>{{ replica.last_seen|naturaltime }}</td>
