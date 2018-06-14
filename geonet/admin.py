@@ -14,7 +14,11 @@ Admin registration for the geonet app
 ## Imports
 ##########################################################################
 
-
+from .models import AWSInstance
 from django.contrib import admin
 
-# Register your models here.
+##########################################################################
+## Register your models here
+##########################################################################
+
+admin.site.register(AWSInstance)

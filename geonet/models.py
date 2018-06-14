@@ -21,6 +21,48 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 
 ##########################################################################
+## AWS Instance Profile
+##########################################################################
+
+class AWSInstance(TimeStampedModel):
+    """
+    For Replicas that are AWS instances, this model holds instance details.
+    """
+
+    replica = models.OneToOneField(
+        "replicas.Replica", on_delete=models.CASCADE, primary_key=True,
+        related_name="aws_instance", 
+        help_text="the replica assoicated with the AWS instance"
+    )
+    instance_id = models.CharField(
+        max_length=255, null=False, blank=False, unique=True,
+        verbose_name="Instance ID",
+        help_text="the AWS instance id to perform AWS queries on"
+    )
+    instance_type = models.CharField(
+        max_length=255, null=True, blank=True, default="",
+        help_text="the AWS instance type/size e.g. t2.medium"
+    )
+    availability_zone = models.CharField(
+        max_length=255, null=True, blank=True, default="",
+        help_text="the AWS availability zone the instance is located in"
+    )
+    launch_time = models.DateTimeField(
+        null=True, blank=True,
+        help_text="the timestamp that the instance was launched"
+    )
+
+    class Meta:
+        db_table = "aws_instances"
+        get_latest_by = "modified"
+        ordering = ("-modified",)
+        verbose_name = "AWS Instance"
+        verbose_name_plural = "AWS Instances"
+
+    def __str__(self):
+        return "{} ({})".format(self.replica.name, self.instance_id)
+
+##########################################################################
 ## Boto Cache Models
 ##########################################################################
 

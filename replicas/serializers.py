@@ -15,6 +15,9 @@ JSON serialization of replica model objects
 ##########################################################################
 
 from .models import Replica, Latency
+from geonet.models import AWSInstance
+from geonet.serializers import AWSInstanceSerializer
+
 from rest_framework import serializers
 
 
@@ -32,14 +35,30 @@ class ReplicaSerializer(serializers.ModelSerializer):
         source="ip_address", label="IP Address", required=True,
         help_text="the external IP address to connect to"
     )
+    aws_instance = AWSInstanceSerializer(required=False)
 
     class Meta:
         model = Replica
         fields = (
             "pid", "name", "address", "hostname", "description",
-            "ipaddr", "domain", "port",
+            "ipaddr", "domain", "port", "aws_instance",
         )
         read_only_fields = ('address',)
+
+    def create(self, validated_data):
+        # Pop the AWS-specific data off of the validated data
+        aws_instance_data = validated_data.pop('aws_instance', None)
+
+        # Create the replica object
+        replica = Replica.objects.create(**validated_data)
+
+        # Create the associated instance if it's given
+        if aws_instance_data:
+            aws_instance = AWSInstance.objects.create(
+                replica=replica, **aws_instance_data
+            )
+
+        return replica 
 
 
 class NeighborSerializer(serializers.ModelSerializer):
@@ -86,4 +105,4 @@ class PingSerializer(serializers.Serializer):
 
 class ActivateSerializer(serializers.Serializer):
 
-    active = serializers.BooleanField() 
+    active = serializers.BooleanField()

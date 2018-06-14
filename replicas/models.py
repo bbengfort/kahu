@@ -103,8 +103,7 @@ class Replica(TimeStampedModel):
         """
         Composes the address of the replica using domain first, then ipaddr.
         """
-        if self.domain:
-            return "{}:{}".format(self.domain, self.port)
+        # TODO: better domain/IP address handling
         return "{}:{}".format(self.ip_address, self.port)
 
     def health(self):

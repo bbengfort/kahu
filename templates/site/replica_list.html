@@ -63,7 +63,7 @@
             <tr>
               <th class="text-center">Status</th>
               <th class="text-center">PID</th>
-              <th>Hostname</th>
+              <th>Name</th>
               <th>Endpoint</th>
               <th>Location</th>
               <th>Last Seen</th>
@@ -80,11 +80,9 @@
               </td>
               <td class="text-center">{{ replica.precedence }}</td>
               <td>
-                <a href="{{ replica.get_absolute_url }}">
-                  {% if replica.hostname %}{{ replica.hostname }}{% else %}{{ replica.name }}{% endif %}
-                </a>
+                <a href="{{ replica.get_absolute_url }}">{{ replica.name }}</a>
               </td>
-              <td><code>{{ replica.ip_address }}:{{ replica.port }}</code></td>
+              <td><code>{{ replica.address }}</code></td>
               <td>{{ replica.location.location }}</td>
               <td>{{ replica.last_seen|naturaltime }}</td>
             </tr>

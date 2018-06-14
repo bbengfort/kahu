@@ -46,7 +46,7 @@ HEALTH = "health"
 class ReplicaList(LoginRequiredMixin, ListView):
 
     model = Replica
-    paginate_by = 10
+    paginate_by = 20
     template_name = "site/replica_list.html"
     context_object_name = "replicas"
 
