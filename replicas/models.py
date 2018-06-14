@@ -244,6 +244,7 @@ class Latency(TimeStampedModel):
     class Meta:
         db_table = "latencies"
         get_latest_by = "modified"
+        ordering = ("-modified",)
         unique_together = ("source", "target")
         verbose_name_plural = "latencies"
 
