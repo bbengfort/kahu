@@ -52,7 +52,8 @@ class Overview(LoginRequiredMixin, TemplateView):
 
         markers = []
         for location in Location.objects.all():
-            markers.append(location.get_marker())
+            if location.replicas.active().count() > 0:
+                markers.append(location.get_marker())
 
         context['markers'] = json.dumps(markers)
         return context

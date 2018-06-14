@@ -167,7 +167,7 @@ class Location(TimeStampedModel):
             "lng": float(self.longitude),
             "title": self.location,
             "replicas": [
-                replica.hostname for replica in self.replicas.all()
+                replica.hostname for replica in self.replicas.active().all()
             ]
         }
 
