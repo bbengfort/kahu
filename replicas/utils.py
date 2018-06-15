@@ -45,6 +45,10 @@ def utcnow():
 ## Enumerations
 ##########################################################################
 
+ONLINE_THRESHOLD = 300
+OFFLINE_THRESHOLD = 3600
+
+
 class Health(Enum):
 
     UNKNOWN = "unknown"

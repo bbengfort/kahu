@@ -18,6 +18,7 @@ from django.db import models
 from datetime import timedelta
 
 from .utils import Health, utcnow
+from .utils import ONLINE_THRESHOLD, OFFLINE_THRESHOLD
 
 
 ##########################################################################
@@ -36,15 +37,18 @@ class ReplicaQuerySet(models.QuerySet):
         now = utcnow()
 
         if status == Health.ONLINE:
-            return self.filter(last_seen__gte=now-timedelta(seconds=120))
+            threshold = timedelta(seconds=ONLINE_THRESHOLD)
+            return self.filter(last_seen__gte=now-threshold)
 
         if status == Health.UNRESPONSIVE:
             return self.filter(last_seen__range=[
-                now-timedelta(seconds=3600), now-timedelta(seconds=120)
+                now-timedelta(seconds=OFFLINE_THRESHOLD),
+                now-timedelta(seconds=ONLINE_THRESHOLD)
             ])
 
         if status == Health.OFFLINE:
-            return self.filter(last_seen__lt=now-timedelta(seconds=3600))
+            threshold = timedelta(seconds=OFFLINE_THRESHOLD)
+            return self.filter(last_seen__lt=now-threshold)
 
         raise ValueError("cannot filter health status '{}'".format(status))
 

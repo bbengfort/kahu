@@ -22,6 +22,7 @@ from model_utils.models import TimeStampedModel
 
 from .utils import Health, utcnow
 from .managers import ReplicaManager
+from .utils import ONLINE_THRESHOLD, OFFLINE_THRESHOLD
 
 
 ##########################################################################
@@ -114,10 +115,10 @@ class Replica(TimeStampedModel):
             return Health.UNKNOWN
 
         delta = utcnow() - self.last_seen
-        if delta.total_seconds() <= 120:
+        if delta.total_seconds() <= ONLINE_THRESHOLD:
             return Health.ONLINE
 
-        if delta.total_seconds() <= 3600:
+        if delta.total_seconds() <= OFFLINE_THRESHOLD:
             return Health.UNRESPONSIVE
 
         return Health.OFFLINE
