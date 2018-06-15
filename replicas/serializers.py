@@ -31,17 +31,13 @@ class ReplicaSerializer(serializers.ModelSerializer):
         source="precedence", label="PID", required=False,
         help_text="the precedence of the replica in the cluster",
     )
-    ipaddr = serializers.IPAddressField(
-        source="ip_address", label="IP Address", required=True,
-        help_text="the external IP address to connect to"
-    )
-    aws_instance = AWSInstanceSerializer(required=False)
+    aws_instance = AWSInstanceSerializer(required=False, label="AWS Instance")
 
     class Meta:
         model = Replica
         fields = (
-            "pid", "name", "address", "hostname", "description",
-            "ipaddr", "domain", "port", "aws_instance",
+            "pid", "name", "description", "hostname",
+            "ip_address", "domain", "port", "aws_instance",
         )
         read_only_fields = ('address',)
 
@@ -58,7 +54,7 @@ class ReplicaSerializer(serializers.ModelSerializer):
                 replica=replica, **aws_instance_data
             )
 
-        return replica 
+        return replica
 
 
 class NeighborSerializer(serializers.ModelSerializer):
