@@ -22,6 +22,8 @@ from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from collections import Counter
+
 
 ##########################################################################
 ## AWS Status View
@@ -80,6 +82,14 @@ class AWSStatus(LoginRequiredMixin, TemplateView):
         status['instances'] = list(self._parse_instances_json(cache))
         status['num_instances'] = len(status['instances'])
         status['num_regions'] = cache.regions.count()
+
+        # Count the states of all instances
+        status['states'] = Counter()
+        valid_states = frozenset(('running', 'stopped'))
+        for instance in status['instances']:
+            state = instance['state'] if instance['state'] in valid_states else 'pending'
+            status['states'][state] += 1
+
         return status
 
     def _parse_instances_json(self, cache):
