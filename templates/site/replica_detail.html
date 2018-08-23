@@ -112,6 +112,123 @@
     </div>
   </div>
 
+  <!-- Health status card -->
+  {% if replica.status %}
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-3">
+
+        <div class="card-header">
+          <i class="fa fa-medkit"></i> System Health
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-6">
+
+              <ul class="number-stats list-unstyled list-inline text-center">
+                <li class="list-inline-item mr-5 mr-sm-3 mr-md-4 mr-lg-5">
+                  <span class="statistic">{{ replica.status.cpu_percent|floatformat:2 }}%</span>
+                  <span class="statlabel text-muted">CPU</span>
+                </li>
+                <li class="list-inline-item mr-5 mr-sm-3 mr-md-4 mr-lg-5">
+                  <span class="statistic">{{ replica.status.active_procs }}</span>
+                  <span class="statlabel text-muted">Procs</span>
+                </li>
+
+                <li class="list-inline-item">
+                  <span class="statistic">{{ replica.status.cpu_cores }}</span>
+                  <span class="statlabel text-muted">Cores</span>
+                </li>
+              </ul>
+
+              <!-- Memory Usage Bar -->
+              <small><i class="fa fa-microchip"></i></small> Memory Usage <small class="text-danger">{{ replica.status.used_ram_percent|floatformat:1 }}%</small>
+              <div class="progress mb-3">
+                {% with pcent=replica.status.used_ram_percent %}
+                <div class="progress-bar bg-danger" role="progressbar"
+                  style="width: {{ pcent }}%" aria-valuenow="{{ pcent }}"
+                  aria-valuemin="0" aria-valuemax="100">
+                {{ replica.status.used_ram|filesizeformat }}
+                </div>
+                {% endwith %}
+                {% with pcent=replica.status.available_ram_percent %}
+                <div class="progress-bar" role="progressbar"
+                  style="width: {{ pcent }}%" aria-valuenow="{{ pcent }}"
+                  aria-valuemin="0" aria-valuemax="100">
+                {{ replica.status.available_ram|filesizeformat }}
+                {% endwith %}
+                </div>
+              </div>
+
+
+              <!-- Disk Usage Bar -->
+              <small><i class="fa fa-database"></i></small> Disk Usage <small class="text-danger">{{ replica.status.used_disk_percent|floatformat:1 }}%</small>
+              <div class="progress">
+                {% with pcent=replica.status.used_disk_percent %}
+                <div class="progress-bar bg-danger" role="progressbar"
+                  style="width: {{ pcent }}%" aria-valuenow="{{ pcent }}"
+                  aria-valuemin="0" aria-valuemax="100">
+                {{ replica.status.used_disk|filesizeformat }}
+                </div>
+                {% endwith %}
+                {% with pcent=replica.status.free_disk_percent %}
+                <div class="progress-bar" role="progressbar"
+                  style="width: {{ pcent }}%" aria-valuenow="{{ pcent }}"
+                  aria-valuemin="0" aria-valuemax="100">
+                {{ replica.status.free_disk|filesizeformat }}
+                {% endwith %}
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-sm-6 mt-4 mt-sm-0">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <strong>Platform</strong>
+                  <span class="pull-right">{{ replica.status.platform }} {{ replica.status.platform_version }}</span>
+                </li>
+
+                <li class="list-group-item">
+                  <strong>Uptime</strong>
+                  <span class="pull-right">{{ replica.status.boot_time|timesince:replica.status.modified }}</span>
+                </li>
+
+                <li class="list-group-item">
+                  <strong>RAM &middot; Disk</strong>
+                  <span class="pull-right">
+                    {{ replica.status.total_ram|filesizeformat}} &middot;
+                    {{ replica.status.total_disk|filesizeformat}}
+                  </span>
+                </li>
+
+                <li class="list-group-item">
+                  <strong>Go Runtime</strong>
+                  <span class="pull-right">
+                    {{ replica.status.go_version }}
+                    {{ replica.status.go_platform}}
+                    {{ replica.status.go_architecture}}
+                  </span>
+                </li>
+              </ul>
+
+
+
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card-footer small text-muted">
+          System status last reported {{ replica.status.modified|naturaltime }}
+        </div>
+
+      </div>
+    </div>
+  </div><!-- health status card ends -->
+  {% endif %}
+
   <div class="row">
     <div class="col-12">
       <div class="card mb-3">
@@ -212,7 +329,7 @@
           method: "PUT",
           dataType: "json",
           data: {active: data.active},
-          headers: {"X-CSRFToken": csrf}, 
+          headers: {"X-CSRFToken": csrf},
           success: function(data, status, jqxhr) {
             if (data.success) {
               location.reload();

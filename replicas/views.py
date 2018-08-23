@@ -14,18 +14,20 @@ Controllers and views for the replicas app (HTML/JSON)
 ## Imports
 ##########################################################################
 
-from .models import Replica, Latency
 from .authentication import MachineUser
+from .models import Replica, Latency, SystemStatus
 from .serializers import ReplicaSerializer, ActivateSerializer
 from .serializers import HeartbeatSerializer, PingSerializer
 from .serializers import LatencySerializer, NeighborSerializer
+from .serializers import SystemStatusSerializer
 from .permissions import IsMachineUser, IsActiveMachineUser
 from .permissions import IsActiveMachineUserOrReadOnly
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsMachineUserOrReadOnly
 from .utils import parse_bool, Health, utcnow
 
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.reverse import reverse
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -34,6 +36,7 @@ from django.conf import settings
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from datetime import date
 
 ACTIVE = "active"
 HEALTH = "health"
@@ -112,6 +115,10 @@ class ReplicaDetail(LoginRequiredMixin, DetailView):
 ##########################################################################
 
 class ReplicaViewSet(viewsets.ModelViewSet):
+    """
+    RESTful endpoint to manage replica objects on the system, accessed by
+    GeoNet when creating or deleting instances from AWS.
+    """
 
     serializer_class = ReplicaSerializer
     queryset = Replica.objects.all()
@@ -163,6 +170,11 @@ class ReplicaViewSet(viewsets.ModelViewSet):
 
 
 class HeartbeatViewSet(viewsets.ViewSet):
+    """
+    Purposefully lightweight liveness endpoint where replicas can report that
+    they are online and functioning correctly. Only machines can access this
+    endpoing, and it is POST only.
+    """
 
     permission_classes = (IsAuthenticated, IsMachineUser, )
 
@@ -198,6 +210,12 @@ class HeartbeatViewSet(viewsets.ViewSet):
 
 
 class LatencyViewSet(viewsets.ViewSet):
+    """
+    Endpoint that handles ping reports from replicas. The neighbors detail
+    action sends all active neighbors for the requesting replica to ping, then
+    accepts ping latencies via POST. Autenticated users can read the list of
+    all pairs of replicas and the computed latency between them.
+    """
 
     permission_classes = (IsAuthenticated, IsActiveMachineUserOrReadOnly,)
 
@@ -248,4 +266,74 @@ class LatencyViewSet(viewsets.ViewSet):
 
         # Serialize the response
         serializer = LatencySerializer(latencies, many=True)
+        return Response(serializer.data)
+
+
+class SystemHealthViewSet(viewsets.ViewSet):
+    """
+    Health check endpoint where replicas report the system status. Note that
+    this is deliberately separate from the heartbeat to ensure that the liveness
+    check is lightweight and not interrupted by system queries.
+    """
+
+    serializer_class = SystemStatusSerializer
+    permission_classes = (IsAuthenticated, IsMachineUserOrReadOnly,)
+
+    def list(self, request):
+        """
+        Returns a list of any replicas with recent status updates.
+        """
+        # Get system statuses that were modified today
+        queryset = SystemStatus.objects.filter(modified__date=date.today())
+        queryset = queryset.order_by('-modified').values("pk")
+
+        # Create status URLs to the detail view
+        status_urls = [
+            reverse('api:health-detail', kwargs=kwargs, request=request)
+            for kwargs in queryset
+        ]
+
+        return Response(status_urls)
+
+    def create(self, request):
+        """
+        Replicas POST their health check statuses to the end point and are
+        identified by their authentication details.
+        """
+        # Get the replica and check if it has an associated health status
+        replica = request.user.replica
+        created = False
+
+        if not hasattr(replica, 'status'):
+            SystemStatus.objects.create(replica=replica)
+            created = True
+
+        # Create the serializer and validate the incoming data
+        serializer = SystemStatusSerializer(data=request.data)
+        if serializer.is_valid():
+
+            # Update the system status from the incoming data
+            for key, val in serializer.validated_data.items():
+                if val:
+                    setattr(replica.status, key, val)
+            replica.status.save()
+
+            # Send the response back
+            code = status.HTTP_201_CREATED if created else status.HTTP_204_NO_CONTENT
+            return Response(None, status=code)
+
+        # Return error messages from invalid request
+        return Response(serializer.error_messages,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        """
+        Returns the replica status if it exists, or raises a 404 if not created.
+        """
+        try:
+            health = SystemStatus.objects.get(pk=pk)
+        except SystemStatus.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(health)
         return Response(serializer.data)

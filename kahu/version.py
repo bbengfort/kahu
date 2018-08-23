@@ -16,10 +16,10 @@ Helper module for managing versioning information
 
 __version_info__ = {
     'major': 1,
-    'minor': 5,
+    'minor': 6,
     'micro': 0,
     'releaselevel': 'final',
-    'serial': 4,
+    'serial': 5,
 }
 
 

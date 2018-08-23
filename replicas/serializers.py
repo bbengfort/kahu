@@ -14,7 +14,8 @@ JSON serialization of replica model objects
 ## Imports
 ##########################################################################
 
-from .models import Replica, Latency
+from .models import Replica, Latency, SystemStatus
+
 from geonet.models import AWSInstance
 from geonet.serializers import AWSInstanceSerializer
 
@@ -80,6 +81,13 @@ class LatencySerializer(serializers.ModelSerializer):
             "source", "target", "messages", "timeouts", "fastest",
             "slowest", "mean", "stddev", "range"
         )
+
+
+class SystemStatusSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SystemStatus
+        exclude = ('replica',)
 
 
 ##########################################################################

@@ -20,6 +20,8 @@ from django.db import transaction
 from model_utils import FieldTracker
 from model_utils.models import TimeStampedModel
 
+from datetime import timedelta
+
 from .utils import Health, utcnow
 from .managers import ReplicaManager
 from .utils import ONLINE_THRESHOLD, OFFLINE_THRESHOLD
@@ -287,3 +289,127 @@ class Latency(TimeStampedModel):
 
     def __str__(self):
         return "{} ⇄ {} μ={:0.3f}ms σ={:0.3f}ms"
+
+
+##########################################################################
+## System Status
+##########################################################################
+
+class SystemStatus(TimeStampedModel):
+    """
+    A representation of the halth and status of the underlying machine
+    environment that a replica is running on. Currently we don't maintain a
+    history of the system status over time, but instead maintain a snapshot of
+    the status of the replica from the last time the health check was
+    performed on the machine and reported.
+    """
+
+    replica = models.OneToOneField(
+        'replicas.Replica', primary_key=True,
+        on_delete=models.CASCADE, related_name='status',
+        help_text="the replica running on this system",
+    )
+    hostname = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="hostname identified by OS"
+    )
+    os = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="operating system name, e.g. darwin, linux"
+    )
+    platform = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="specific os version e.g. ubuntu, linuxmint"
+    )
+    platform_version = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="operating system version number"
+    )
+    active_procs = models.IntegerField(
+        null=True, blank=True,
+        help_text="number of active processes"
+    )
+    uptime = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="number of seconds the host has been online"
+    )
+    total_ram = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="total amount of RAM on the system"
+    )
+    available_ram = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="RAM available for programs to allocate (from kernel)"
+    )
+    used_ram = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="amount of RAM used by programs (from kernel)"
+    )
+    used_ram_percent = models.FloatField(
+        null=True, blank=True,
+        help_text="percentage of RAM used by programs"
+    )
+    filesystem =  models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="the type of filesystem at root"
+    )
+    total_disk = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="total amount of disk space available at root directory"
+    )
+    free_disk = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="total amount of unused disk space at root directory"
+    )
+    used_disk = models.BigIntegerField(
+        null=True, blank=True,
+        help_text="total amount of disk space used by root directory"
+    )
+    used_disk_percent = models.FloatField(
+        null=True, blank=True,
+        help_text="percentage of disk space used by root directory"
+    )
+    cpu_model = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="the model of CPU on the machine"
+    )
+    cpu_cores = models.IntegerField(
+        null=True, blank=True,
+        help_text="the number of CPU cores detected"
+    )
+    cpu_percent = models.FloatField(
+        null=True, blank=True,
+        help_text="the percentage of all cores being used over the last 5 seconds"
+    )
+    go_version = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="the version of Go for the currently running instance"
+    )
+    go_platform = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="the platform compiled for the currently running instance"
+    )
+    go_architecture = models.CharField(
+        max_length=255, null=True, blank=True,
+        help_text="the chip architecture compiled for the currently running instance"
+    )
+
+
+    class Meta:
+        db_table = "system_statuses"
+        get_latest_by = "modified"
+        ordering = ("-modified",)
+        verbose_name = "system status"
+        verbose_name_plural = "system statuses"
+
+    @property
+    def free_disk_percent(self):
+        return 100 - self.used_disk_percent
+
+    @property
+    def available_ram_percent(self):
+        return 100 - self.used_ram_percent
+
+    @property
+    def boot_time(self):
+        return self.modified - timedelta(seconds=self.uptime)

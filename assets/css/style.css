@@ -478,3 +478,22 @@ footer.sticky-footer {
     width: calc(100% - 55px);
   }
 }
+
+
+/* Stats Numbers */
+.number-stats li span {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.statistic {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.statlabel {
+    font-size: .9em;
+    margin: -.3em 0 0 0;
+}
