@@ -124,13 +124,20 @@ class ReplicaViewSet(viewsets.ModelViewSet):
     queryset = Replica.objects.all()
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
 
-    @action(detail=False, permission_classes=[IsAdminUser])
+    @action(detail=False, permission_classes=(IsAdminUser,))
     def tokens(self, request):
+        """
+        Admin users cen get a list of API tokens for all replicas for system
+        configuration purposes.
+        """
         data = self.get_queryset().values('name', 'api_key')
         return Response(data)
 
     @action(detail=True, methods=['post', 'put'], permission_classes=(IsAuthenticated,))
     def activate(self, request, pk=None):
+        """
+        From the user interface, activate and deactivate a replica.
+        """
         replica = self.get_object()
         serializer = ActivateSerializer(data=request.data)
         if serializer.is_valid():
@@ -158,6 +165,29 @@ class ReplicaViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
+
+    @action(detail=False, methods=['get', 'post'], permission_classes=(IsAdminUser,))
+    def geonet(self, request):
+        """
+        Reports the replica names that are active on GET and can set a group
+        of replicas as active on POST (deactivating all others). Note that
+        posting an empty list is equivalent to deactivating all replicas.
+        """
+        # TODO: Remove this method and find a better way to configure experiments! 
+        if request.method == 'GET':
+            data = Replica.objects.active().values_list("name", flat=True)
+            return Response(data)
+
+        if request.method == 'POST':
+            names = list(map(str, request.data))
+            pks = Replica.objects.filter(name__in=names).values_list("pk", flat=True)
+
+            activated = Replica.objects.filter(id__in=pks).update(active=True)
+            deactivated = Replica.objects.exclude(id__in=pks).update(active=False)
+            return Response({"activated": activated, "deactivated": deactivated})
+
+        # This should never happen
+        return Response(status=status.HTTP_405_NOT_ALLOWED)
 
     def get_queryset(self):
         """
