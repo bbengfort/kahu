@@ -58,6 +58,8 @@ urlpatterns = [
 
     # Application URLs
     path('', Overview.as_view(), name="overview"),
+    path('latency/', LatencyDetail.as_view(), name="latency"),
+    path('latency/global_latency.svg', GlobalLatencySVG.as_view(), name="global_latency.svg"),
     path('replicas/', ReplicaList.as_view(), name="replica-list"),
     path('replicas/<slug:slug>/', ReplicaDetail.as_view(), name="replica-detail"),
     path('geonet/', AWSStatus.as_view(), name="geonet"),
