@@ -1,5 +1,5 @@
 ## Web Application
-Django==2.1
+Django==2.1.2
 django-model-utils==3.1.2
 django-rest-framework==0.1.0
 djangorestframework==3.8.2
@@ -34,6 +34,6 @@ six==1.11.0
 #urllib3==1.22
 
 ## Python Environment
-#pip==18.0
+#pip==18.1
 #setuptools==39.2.0
 #wheel==0.31.1

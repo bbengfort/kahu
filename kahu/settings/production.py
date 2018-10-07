@@ -22,6 +22,9 @@ from .base import *
 ## Production Environment
 ##########################################################################
 
+## Ensure debug mode is not running production
+DEBUG = False
+
 ## Hosts
 ALLOWED_HOSTS    = [
     'kahu.herokuapp.com',

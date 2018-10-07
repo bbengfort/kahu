@@ -263,12 +263,12 @@ ADMINS = (
     ('Kahu Admin', environ_setting("KAHU_ADMIN_EMAIL")),
 )
 
-SERVER_EMAIL = 'Bengfort Server <server@bengfort.com>'
+SERVER_EMAIL = environ_setting("SERVER_EMAIL", "")
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = environ_setting("EMAIL_HOST", "")
 EMAIL_HOST_USER = environ_setting("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = environ_setting("EMAIL_HOST_PASSWORD", "")
-EMAIL_PORT = 587
+EMAIL_PORT = environ_setting("EMAIL_PORT", 587)
 EMAIL_SUBJECT_PREFIX = '[KAHU] '
 
 
